@@ -13,7 +13,50 @@ type t2 = Ast.AstTds.programme
 (* Vérifie la bonne utilisation des identifiants et tranforme l'expression
    en une expression de type AstTds.expression *)
 (* Erreur si mauvaise utilisation des identifiants *)
-let analyse_tds_expression tds e = AstTds.Booleen true (* failwith "todo"*)
+let rec analyse_tds_expression tds e =
+  match e with
+  | AstSyntax.AppelFonction (id, le) -> (
+      (* on recherche l'identidiant de la fonction *)
+      match chercherGlobalement tds id with
+      | None ->
+          (* l'identifiant n'est pas déclaré *)
+          raise (IdentifiantNonDeclare id)
+      | Some info_ast -> (
+          let info = info_ast_to_info info_ast in
+          match info with
+          | InfoFun _ ->
+              let lne = List.map (fun e -> analyse_tds_expression tds e) le in
+              AstTds.AppelFonction (info_ast, lne)
+          | _ ->
+              (* l'identifiant existe mais ne correspond à une fonction *)
+              raise (MauvaiseUtilisationIdentifiant id)))
+  | AstSyntax.Ident n -> (
+      (* On cherche l'identifiant n dans la tds globale.*)
+      match chercherGlobalement tds n with
+      | None ->
+          (* L'identifiant n'est pas trouvé dans la tds globale. *)
+          raise (IdentifiantNonDeclare n)
+      | Some info_ast -> (
+          match info_ast_to_info info_ast with
+          | InfoVar _ ->
+              (* on renvoit la variable trouvée *)
+              AstTds.Ident info_ast
+          | InfoConst (_, value) ->
+              (* on remplace la constante par la valeur *)
+              AstTds.Entier value
+          | _ -> raise (MauvaiseUtilisationIdentifiant n)))
+  | AstSyntax.Binaire (b, e1, e2) ->
+      (*obtention de l'expression transformée*)
+      let ne1 = analyse_tds_expression tds e1 in
+      (*obtention de l'expression transformée*)
+      let ne2 = analyse_tds_expression tds e2 in
+      AstTds.Binaire (b, ne1, ne2)
+  | AstSyntax.Unaire (op, e1) ->
+      (*obtention de l'expression transformée*)
+      let ne1 = analyse_tds_expression tds e1 in
+      AstTds.Unaire (op, ne1)
+  | AstSyntax.Booleen b -> AstTds.Booleen b
+  | AstSyntax.Entier i -> AstTds.Entier i
 
 (* analyse_tds_instruction : tds -> info_ast option -> AstSyntax.instruction -> AstTds.instruction *)
 (* Paramètre tds : la table des symboles courante *)
@@ -137,7 +180,46 @@ and analyse_tds_bloc tds oia li =
    en une fonction de type AstTds.fonction *)
 (* Erreur si mauvaise utilisation des identifiants *)
 let analyse_tds_fonction maintds (AstSyntax.Fonction (t, n, lp, li)) =
-  failwith "TO DO"
+  match chercherGlobalement maintds n with
+  | Some _ ->
+      (* l'identifiant existe déjà => duplication*)
+      raise (DoubleDeclaration n)
+  | None ->
+      (* On crée une tds pour la fonction a partir de la main tds **)
+      let tdsFunc = creerTDSFille maintds in
+      (* On extrait les types des paramètres a partir de la liste des paramètres*)
+      let typesArgsList = List.map (fun (typ, _) -> typ) lp in
+      (* On extrait les noms des paramètres a partir de la liste des paramètres*)
+      let nomArgsList = List.map (fun (_, nom) -> nom) lp in
+
+      (* Fonction auxilliaire pour rajouter un paramètre *)
+      let ajouterParam typ id =
+        match chercherLocalement tdsFunc id with
+        | Some _ ->
+            (* l'identifiant existe déjà => duplication*)
+            raise (DoubleDeclaration id)
+        | None ->
+            (* l'identifian est disponible, on l'ajoute *)
+            let infoVar_ast = info_to_info_ast (InfoVar (id, typ, 0, "")) in
+            ajouter tdsFunc id infoVar_ast;
+            (typ, infoVar_ast)
+      in
+
+      (* Ajout de la fonction a la main tds *)
+      let infoFun_ast = info_to_info_ast (InfoFun (n, t, typesArgsList)) in
+      ajouter maintds n infoFun_ast;
+
+      (* traitement des arguments de la fonction *)
+      let typInfoList = List.map2 ajouterParam typesArgsList nomArgsList in
+
+      (* Processing du body de la fonction *)
+      (* A partir de la tds des paramètres on crée une seconde tds pour le body de la fonction*)
+      let funBodyTds = creerTDSFille tdsFunc in
+
+      (* On analyse le blody de la fonction*)
+      let funBloc = analyse_tds_bloc funBodyTds (Some infoFun_ast) li in
+      (* on renvoit la fonction *)
+      AstTds.Fonction (t, infoFun_ast, typInfoList, funBloc)
 
 (* analyser : AstSyntax.programme -> AstTds.programme *)
 (* Paramètre : le programme à analyser *)
