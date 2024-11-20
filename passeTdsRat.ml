@@ -22,7 +22,7 @@ let rec analyse_tds_expression tds e =
           (* l'identifiant n'est pas déclaré *)
           raise (IdentifiantNonDeclare id)
       | Some info_ast -> (
-          let info = info_ast_to_info info_ast in
+          let info = !info_ast in
           match info with
           | InfoFun _ ->
               let lne = List.map (fun e -> analyse_tds_expression tds e) le in
@@ -37,7 +37,7 @@ let rec analyse_tds_expression tds e =
           (* L'identifiant n'est pas trouvé dans la tds globale. *)
           raise (IdentifiantNonDeclare n)
       | Some info_ast -> (
-          match info_ast_to_info info_ast with
+          match !info_ast with
           | InfoVar _ ->
               (* on renvoit la variable trouvée *)
               AstTds.Ident info_ast
@@ -79,7 +79,7 @@ let rec analyse_tds_instruction tds oia i =
           (* Création de l'information associée à l'identfiant *)
           let info = InfoVar (n, Undefined, 0, "") in
           (* Création du pointeur sur l'information *)
-          let ia = info_to_info_ast info in
+          let ia = ref info in
           (* Ajout de l'information (pointeur) dans la tds *)
           ajouter tds n ia;
           (* Renvoie de la nouvelle déclaration où le nom a été remplacé par l'information
@@ -97,7 +97,7 @@ let rec analyse_tds_instruction tds oia i =
       | Some info -> (
           (* L'identifiant est trouvé dans la tds globale,
              il a donc déjà été déclaré. L'information associée est récupérée. *)
-          match info_ast_to_info info with
+          match !info with
           | InfoVar _ ->
               (* Vérification de la bonne utilisation des identifiants dans l'expression *)
               (* et obtention de l'expression transformée *)
@@ -114,7 +114,7 @@ let rec analyse_tds_instruction tds oia i =
           (* L'identifiant n'est pas trouvé dans la tds locale,
              il n'a donc pas été déclaré dans le bloc courant *)
           (* Ajout dans la tds de la constante *)
-          ajouter tds n (info_to_info_ast (InfoConst (n, v)));
+          ajouter tds n (ref (InfoConst (n, v)));
           (* Suppression du noeud de déclaration des constantes devenu inutile *)
           AstTds.Empty
       | Some _ ->
@@ -193,6 +193,9 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction (t, n, lp, li)) =
       let nomArgsList = List.map (fun (_, nom) -> nom) lp in
 
       (* Fonction auxilliaire pour rajouter un paramètre *)
+      (* paramètre type: le type du paramètre*)
+      (* paramètre id: le nom du paramètre*)
+      (* renvoit le couple typ * info_ast pour la liste  des paramètre de la fonction **)
       let ajouterParam typ id =
         match chercherLocalement tdsFunc id with
         | Some _ ->
@@ -200,13 +203,15 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction (t, n, lp, li)) =
             raise (DoubleDeclaration id)
         | None ->
             (* l'identifian est disponible, on l'ajoute *)
-            let infoVar_ast = info_to_info_ast (InfoVar (id, typ, 0, "")) in
+            (* on crée l'info_ast associé au paramètre*)
+            let infoVar_ast = ref (InfoVar (id, typ, 0, "")) in
+            (* on l'ajoute à la tds *)
             ajouter tdsFunc id infoVar_ast;
             (typ, infoVar_ast)
       in
 
       (* Ajout de la fonction a la main tds *)
-      let infoFun_ast = info_to_info_ast (InfoFun (n, t, typesArgsList)) in
+      let infoFun_ast = ref (InfoFun (n, t, typesArgsList)) in
       ajouter maintds n infoFun_ast;
 
       (* traitement des arguments de la fonction *)
