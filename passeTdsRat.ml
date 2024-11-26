@@ -231,7 +231,7 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction (t, n, lp, li)) =
 (* Vérifie la bonne utilisation des identifiants et tranforme le programme
    en un programme de type AstTds.programme *)
 (* Erreur si mauvaise utilisation des identifiants *)
-let analyser (AstSyntax.Programme (fonctions, prog)) =
+let analyser (AstSyntax.Programme (globales , fonctions, prog)) =
   let tds = creerTDSMere () in
   let nf = List.map (analyse_tds_fonction tds) fonctions in
   let nb = analyse_tds_bloc tds None prog in
