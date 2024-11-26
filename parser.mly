@@ -33,9 +33,14 @@ open Ast.AstSyntax
 %token TRUE
 %token FALSE
 %token PLUS
-%token MULT
+%token STAR
 %token INF
 %token EOF
+
+%token STATIC
+%token REF
+%token NEW
+%token NULL
 
 (* Type de l'attribut synthétisé des non-terminaux *)
 %type <programme> prog
@@ -88,7 +93,7 @@ e :
 | NUM e1=e                {Unaire(Numerateur,e1)}
 | DENOM e1=e              {Unaire(Denominateur,e1)}
 | PO e1=e PLUS e2=e PF    {Binaire (Plus,e1,e2)}
-| PO e1=e MULT e2=e PF    {Binaire (Mult,e1,e2)}
+| PO e1=e STAR e2=e PF    {Binaire (Mult,e1,e2)}
 | PO e1=e EQUAL e2=e PF   {Binaire (Equ,e1,e2)}
 | PO e1=e INF e2=e PF     {Binaire (Inf,e1,e2)}
 | PO exp=e PF             {exp}
