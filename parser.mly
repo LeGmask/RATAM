@@ -40,6 +40,7 @@ open Ast.AstSyntax
 (* Type de l'attribut synthétisé des non-terminaux *)
 %type <programme> prog
 %type <instruction list> bloc
+%type <globale> var
 %type <fonction> fonc
 %type <instruction> i
 %type <typ> typ
@@ -53,7 +54,9 @@ open Ast.AstSyntax
 
 main : lfi=prog EOF     {lfi}
 
-prog : lf=fonc* ID li=bloc  {Programme (lf,li)}
+prog : lv=var* lf=fonc* ID li=bloc  {Programme (lv,lf,li)}
+
+var : STATIC t=typ n=ID EQUAL exp=e {Globale (t, n, exp)} 
 
 fonc : t=typ n=ID PO lp=separated_list(VIRG,param) PF li=bloc {Fonction(t,n,lp,li)}
 

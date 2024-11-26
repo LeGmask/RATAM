@@ -52,13 +52,17 @@ module AstSyntax = struct
     (* return d'une fonction *)
     | Retour of expression
 
+  (* Structure d'une variable globale *)
+  (* type - nom - expression *)
+  type globale = Globale of typ * string * expression
+
   (* Structure des fonctions de Rat *)
   (* type de retour - nom - liste des paramètres (association type et nom) - corps de la fonction *)
   type fonction = Fonction of typ * string * (typ * string) list * bloc
 
   (* Structure d'un programme Rat *)
   (* liste de fonction - programme principal *)
-  type programme = Programme of fonction list * bloc
+  type programme = Programme of globale list * fonction list * bloc
 end
 
 (* ********************************************* *)

@@ -39,9 +39,9 @@ end
 (* Compilateurs intermédiaires *)
 
 (* Compilateur créant l'AST *)
-(*
+
 module CompilateurRat = Compilateur (PasseTdsNop) (PasseTypeNop) (PassePlacementNop) (PasseCodeNop)
-*)
+
 
 (* + passe de résolution des identifiants *)
 (*
