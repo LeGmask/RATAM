@@ -96,8 +96,9 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
     ^ "\n"
 
   (* Conversion d'un programme Rat *)
-  let string_of_programme (Programme (fonctions, instruction)) =
-    List.fold_right (fun f tq -> string_of_fonction f ^ tq) fonctions ""
+  let string_of_programme (Programme (gloables, fonctions, instruction)) =
+    List.fold_right (fun g tq -> string_of_globale g ^ tq) gloables ""
+    ^ List.fold_right (fun f tq -> string_of_fonction f ^ tq) fonctions ""
     ^ List.fold_right (fun i tq -> string_of_instruction i ^ tq) instruction ""
 
   (* Affichage d'un programme Rat *)
