@@ -4,6 +4,7 @@ open Type
 module type Ast = sig
   type expression
   type instruction
+  type globale
   type fonction
   type programme
 end
