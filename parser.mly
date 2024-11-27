@@ -71,7 +71,7 @@ bloc : AO li=i* AF      {li}
 
 i :
 | t=typ n=ID EQUAL e1=e PV          {Declaration (t,n,e1)}
-| STATIC t=typ n=ID exp=e PV        {StatiqueLocale (t, n, exp)}
+| STATIC t=typ n=ID EQUAL exp=e PV  {StatiqueLocale (t, n, exp)}
 | n=a EQUAL e1=e PV                 {Affectation (n,e1)}
 | CONST n=ID EQUAL e=ENTIER PV      {Constante (n,e)}
 | PRINT e1=e PV                     {Affichage (e1)}
