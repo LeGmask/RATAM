@@ -44,6 +44,12 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
     | Equ -> "= "
     | Inf -> "< "
 
+  (* Conversio des affectables *)
+  let rec string_of_affectable a = 
+    match a with
+    | Ident n -> n
+    | Dereference ra -> "(*" ^ string_of_affectable ra ^ ")"
+
   (* Conversion des expressions *)
   let rec string_of_expression e =
     match e with
@@ -51,7 +57,7 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
         "call " ^ n ^ "("
         ^ List.fold_right (fun i tq -> string_of_expression i ^ tq) le ""
         ^ ") "
-    | Ident n -> n ^ " "
+    | Affectable a -> (string_of_affectable a) ^ " "
     | Booleen b -> if b then "true " else "false "
     | Entier i -> string_of_int i ^ " "
     | Unaire (op, e1) -> string_of_unaire op ^ string_of_expression e1 ^ " "
@@ -69,8 +75,8 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
     | Declaration (t, n, e) ->
         "Declaration  : " ^ string_of_type t ^ " " ^ n ^ " = "
         ^ string_of_expression e ^ "\n"
-    | Affectation (n, e) ->
-        "Affectation  : " ^ n ^ " = " ^ string_of_expression e ^ "\n"
+    | Affectation (a, e) ->
+        "Affectation  : " ^ (string_of_affectable a) ^ " = " ^ string_of_expression e ^ "\n"
     | Constante (n, i) -> "Constante  : " ^ n ^ " = " ^ string_of_int i ^ "\n"
     | Affichage e -> "Affichage  : " ^ string_of_expression e ^ "\n"
     | Conditionnelle (c, t, e) ->
