@@ -5,6 +5,7 @@ module type Ast = sig
   type expression
   type instruction
   type globale
+  type affectable
   type fonction
   type programme
 end
@@ -19,12 +20,15 @@ module AstSyntax = struct
   (* Opérateurs binaires de Rat *)
   type binaire = Fraction | Plus | Mult | Equ | Inf
 
+  (* Affectables de Rat Etendu *)
+  type affectable  = Ident of string | Dereference of affectable
+
   (* Expressions de Rat *)
   type expression =
     (* Appel de fonction représenté par le nom de la fonction et la liste des paramètres réels *)
     | AppelFonction of string * expression list
     (* Accès à un identifiant représenté par son nom *)
-    | Ident of string
+    | Ident of affectable
     (* Booléen *)
     | Booleen of bool
     (* Entier *)
@@ -33,6 +37,14 @@ module AstSyntax = struct
     | Unaire of unaire * expression
     (* Opération binaire représentée par l'opérateur, l'opérande gauche et l'opérande droite *)
     | Binaire of binaire * expression * expression
+(* Pointeur nul *)
+    | PointeurNul
+    (* Allocation d'un nouvel objet *)
+    | Nouveau of typ
+    (* Adresse mémoire *)
+    | Adresse of string
+
+
 
   (* Instructions de Rat *)
   type bloc = instruction list
@@ -40,8 +52,10 @@ module AstSyntax = struct
   and instruction =
     (* Déclaration de variable représentée par son type, son nom et l'expression d'initialisation *)
     | Declaration of typ * string * expression
+    (* Déclaration d'une variable statique locale *)
+    | StatiqueLocale of typ * string * expression
     (* Affectation d'une variable représentée par son nom et la nouvelle valeur affectée *)
-    | Affectation of string * expression
+    | Affectation of affectable * expression
     (* Déclaration d'une constante représentée par son nom et sa valeur (entier) *)
     | Constante of string * int
     (* Affichage d'une expression *)

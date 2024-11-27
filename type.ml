@@ -1,10 +1,11 @@
-type typ = Bool | Int | Rat | Undefined
+type typ = Bool | Int | Rat | Pointeur of typ | Undefined
 
-let string_of_type t =
+let rec string_of_type t =
   match t with
   | Bool -> "Bool"
   | Int -> "Int"
   | Rat -> "Rat"
+  | Pointeur(st) -> "Pointeur de " ^ (string_of_type st)
   | Undefined -> "Undefined"
 
 let est_compatible t1 t2 =
