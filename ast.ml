@@ -28,7 +28,7 @@ module AstSyntax = struct
     (* Appel de fonction représenté par le nom de la fonction et la liste des paramètres réels *)
     | AppelFonction of string * expression list
     (* Accès à un identifiant représenté par son nom *)
-    | Ident of affectable
+    | Affectable of affectable
     (* Booléen *)
     | Booleen of bool
     (* Entier *)
