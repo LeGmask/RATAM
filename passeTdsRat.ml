@@ -30,7 +30,7 @@ let rec analyse_tds_expression tds e =
           | _ ->
               (* l'identifiant existe mais ne correspond à une fonction *)
               raise (MauvaiseUtilisationIdentifiant id)))
-  | AstSyntax.Ident n -> (
+  | AstSyntax.Affectable a -> failwith "TODO" (*
       (* On cherche l'identifiant n dans la tds globale.*)
       match chercherGlobalement tds n with
       | None ->
@@ -44,7 +44,7 @@ let rec analyse_tds_expression tds e =
           | InfoConst (_, value) ->
               (* on remplace la constante par la valeur *)
               AstTds.Entier value
-          | _ -> raise (MauvaiseUtilisationIdentifiant n)))
+          | _ -> raise (MauvaiseUtilisationIdentifiant n))*)
   | AstSyntax.Binaire (b, e1, e2) ->
       (*obtention de l'expression transformée*)
       let ne1 = analyse_tds_expression tds e1 in
@@ -89,7 +89,8 @@ let rec analyse_tds_instruction tds oia i =
           (* L'identifiant est trouvé dans la tds locale,
              il a donc déjà été déclaré dans le bloc courant *)
           raise (DoubleDeclaration n))
-  | AstSyntax.Affectation (n, e) -> (
+  | AstSyntax.Affectation (a, e) -> failwith "TODO"
+        (*
       match chercherGlobalement tds n with
       | None ->
           (* L'identifiant n'est pas trouvé dans la tds globale. *)
@@ -107,7 +108,7 @@ let rec analyse_tds_instruction tds oia i =
               AstTds.Affectation (info, ne)
           | _ ->
               (* Modification d'une constante ou d'une fonction *)
-              raise (MauvaiseUtilisationIdentifiant n)))
+              raise (MauvaiseUtilisationIdentifiant n))*)
   | AstSyntax.Constante (n, v) -> (
       match chercherLocalement tds n with
       | None ->

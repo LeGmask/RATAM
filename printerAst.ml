@@ -68,6 +68,9 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
         | _ ->
             string_of_expression e1 ^ string_of_binaire b
             ^ string_of_expression e2 ^ " ")
+    | PointeurNul -> "nullptr "
+    | Nouveau (t) -> "new " ^ (string_of_type t) ^ " "
+    | Adresse (n) -> "&" ^ n ^ " "
 
   (* Conversion des instructions *)
   let rec string_of_instruction i =
