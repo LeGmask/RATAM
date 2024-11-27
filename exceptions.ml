@@ -5,7 +5,7 @@ open Ast.AstSyntax
 exception DoubleDeclaration of string
 exception IdentifiantNonDeclare of string
 exception MauvaiseUtilisationIdentifiant of string
-
+ 
 (* Exceptions pour le typage *)
 (* Le premier type est le type réel, le second est le type attendu *)
 exception TypeInattendu of typ * typ
@@ -15,3 +15,6 @@ exception TypeBinaireInattendu of binaire * typ * typ
 
 (* Utilisation illégale de return dans le programme principal *)
 exception RetourDansMain
+
+(* Déclaration illégale de variables statiques locales hors d'une fonction *)
+exception VariableLocaleStatiqueHorsFonction
