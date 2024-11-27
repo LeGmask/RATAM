@@ -3,9 +3,37 @@
 open Tds
 open Exceptions
 open Ast
+open Utils
 
 type t1 = Ast.AstSyntax.programme
 type t2 = Ast.AstTds.programme
+
+(* analyse_tds_var : tds -> AstSyntax.var -> AstTds.var ?? *)
+(* Paramètre tds : la table des symboles courante *)
+(* Paramètre v : la variable globale à analyser *)
+(* TODO DOC + commentaires *)
+let rec analyse_tds_globale tds (AstSyntax.Globale(t, n, e)) = (
+    match chercherLocalement tds n with
+    | None ->
+        (* L'identifiant n'est pas trouvé dans la tds locale,
+            il n'a donc pas encore été utilisé par une variable globale *)
+        (* Vérification de la bonne utilisation des identifiants dans l'expression *)
+        (* et obtention de l'expression transformée *)
+        let ne = analyse_tds_expression tds e in
+        (* Création de l'information associée à l'identfiant *)
+        let info = InfoVar (n, Undefined, 0, "") in
+        (* Création du pointeur sur l'information *)
+        let ia = ref info in
+        (* Ajout de l'information (pointeur) dans la tds *)
+        ajouter tds n ia;
+        (* Renvoie de la nouvelle déclaration où le nom a été remplacé par l'information
+            et l'expression remplacée par l'expression issue de l'analyse *)
+        failwith "Implement AstTds.Globale (ou réutiliser AstTds.Declaration ?)"
+    | Some _ ->
+        (* L'identifiant est trouvé dans la tds locale,
+            il a donc déjà été déclaré dans le bloc courant *)
+        raise (DoubleDeclaration n))
+
 
 (* analyse_tds_expression : tds -> AstSyntax.expression -> AstTds.expression *)
 (* Paramètre tds : la table des symboles courante *)
@@ -13,7 +41,7 @@ type t2 = Ast.AstTds.programme
 (* Vérifie la bonne utilisation des identifiants et tranforme l'expression
    en une expression de type AstTds.expression *)
 (* Erreur si mauvaise utilisation des identifiants *)
-let rec analyse_tds_expression tds e =
+and analyse_tds_expression tds e =
   match e with
   | AstSyntax.AppelFonction (id, le) -> (
       (* on recherche l'identidiant de la fonction *)
@@ -30,7 +58,9 @@ let rec analyse_tds_expression tds e =
           | _ ->
               (* l'identifiant existe mais ne correspond à une fonction *)
               raise (MauvaiseUtilisationIdentifiant id)))
-  | AstSyntax.Affectable a -> failwith "TODO" (*
+  | AstSyntax.Affectable a -> (
+      (* récupération de l'identifiant dans l'affectable *)
+      let n = trouver_id_racine a in
       (* On cherche l'identifiant n dans la tds globale.*)
       match chercherGlobalement tds n with
       | None ->
@@ -44,7 +74,7 @@ let rec analyse_tds_expression tds e =
           | InfoConst (_, value) ->
               (* on remplace la constante par la valeur *)
               AstTds.Entier value
-          | _ -> raise (MauvaiseUtilisationIdentifiant n))*)
+          | _ -> raise (MauvaiseUtilisationIdentifiant n)))
   | AstSyntax.Binaire (b, e1, e2) ->
       (*obtention de l'expression transformée*)
       let ne1 = analyse_tds_expression tds e1 in
@@ -57,6 +87,9 @@ let rec analyse_tds_expression tds e =
       AstTds.Unaire (op, ne1)
   | AstSyntax.Booleen b -> AstTds.Booleen b
   | AstSyntax.Entier i -> AstTds.Entier i
+  | AstSyntax.PointeurNul -> failwith "TODO : analyse_tds_expression pointeur nul"
+  | AstSyntax.Nouveau t -> failwith "TODO : analyse_tds_expression nouveau type"
+  | AstSyntax.Adresse n -> failwith "TODO : analyse_tds_expression "
 
 (* analyse_tds_instruction : tds -> info_ast option -> AstSyntax.instruction -> AstTds.instruction *)
 (* Paramètre tds : la table des symboles courante *)
@@ -89,8 +122,29 @@ let rec analyse_tds_instruction tds oia i =
           (* L'identifiant est trouvé dans la tds locale,
              il a donc déjà été déclaré dans le bloc courant *)
           raise (DoubleDeclaration n))
-  | AstSyntax.Affectation (a, e) -> failwith "TODO"
-        (*
+
+  | AstSyntax.StatiqueLocale (t, n, e) -> (  
+    (* On récupère l'information associée à la fonction dans laquelle on déclare *)
+    match oia with
+    (* Il n'y a pas d'information -> l'instruction est hors d'une fonction : erreur *)
+    | None ->
+        raise VariableLocaleStatiqueHorsFonction
+        (* Il y a une information -> l'instruction est dans une fonction *)
+    | Some ia ->
+        (* Analyse de l'expression *)
+        let ne = analyse_tds_expression tds e in
+        (* Création de l'information associée à l'identfiant *)
+        let info = InfoVar (n, Undefined, 0, "") in
+        (* Création du pointeur sur l'information *)
+        let ia = ref info in
+        (* Ajout de l'information (pointeur) dans la tds *)
+        ajouter tds n ia;
+        failwith "TODO : AstTds.StatiqueLocale"
+        (*AstTds.StatiqueLocale (ne, ia)*))
+  
+  | AstSyntax.Affectation (a, e) ->
+      failwith "TODO analyse_tds_instruction affectation"
+      (*
       match chercherGlobalement tds n with
       | None ->
           (* L'identifiant n'est pas trouvé dans la tds globale. *)
@@ -232,8 +286,9 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction (t, n, lp, li)) =
 (* Vérifie la bonne utilisation des identifiants et tranforme le programme
    en un programme de type AstTds.programme *)
 (* Erreur si mauvaise utilisation des identifiants *)
-let analyser (AstSyntax.Programme (globales , fonctions, prog)) =
+let analyser (AstSyntax.Programme (globales, fonctions, prog)) =
   let tds = creerTDSMere () in
+  let ng = List.map (analyse_tds_globale tds) globales in 
   let nf = List.map (analyse_tds_fonction tds) fonctions in
   let nb = analyse_tds_bloc tds None prog in
   AstTds.Programme (nf, nb)
