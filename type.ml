@@ -5,7 +5,7 @@ let rec string_of_type t =
   | Bool -> "Bool"
   | Int -> "Int"
   | Rat -> "Rat"
-  | Pointeur(st) -> "Pointeur de " ^ (string_of_type st)
+  | Pointeur st -> "Pointeur de " ^ string_of_type st
   | Undefined -> "Undefined"
 
 let est_compatible t1 t2 =
@@ -13,15 +13,15 @@ let est_compatible t1 t2 =
   | Bool, Bool -> true
   | Int, Int -> true
   | Rat, Rat -> true
-  | Pointeur a, Pointeur b -> a=b
+  | Pointeur a, Pointeur b -> a = b
   | _ -> false
 
 let%test _ = est_compatible Bool Bool
 let%test _ = est_compatible Int Int
 let%test _ = est_compatible Rat Rat
-let%test _ = est_compatible ((Pointeur(Int))) ((Pointeur(Int)))
-let%test _ = est_compatible ((Pointeur(Bool))) ((Pointeur(Bool)))
-let%test _ = est_compatible (Pointeur(Rat)) (Pointeur(Rat))
+let%test _ = est_compatible (Pointeur Int) (Pointeur Int)
+let%test _ = est_compatible (Pointeur Bool) (Pointeur Bool)
+let%test _ = est_compatible (Pointeur Rat) (Pointeur Rat)
 let%test _ = not (est_compatible Int Bool)
 let%test _ = not (est_compatible Bool Int)
 let%test _ = not (est_compatible Int Rat)
@@ -35,17 +35,15 @@ let%test _ = not (est_compatible Bool Undefined)
 let%test _ = not (est_compatible Undefined Int)
 let%test _ = not (est_compatible Undefined Rat)
 let%test _ = not (est_compatible Undefined Bool)
-let%test _ = not (est_compatible (Pointeur(Int)) (Pointeur(Rat)))
-let%test _ = not (est_compatible (Pointeur(Int)) (Pointeur(Bool)))
-let%test _ = not (est_compatible (Pointeur(Bool)) (Pointeur(Int)))
-let%test _ = not (est_compatible (Pointeur(Bool)) (Pointeur(Rat)))
-let%test _ = not (est_compatible (Pointeur(Rat)) (Pointeur(Int)))
-let%test _ = not (est_compatible (Pointeur(Rat)) (Pointeur(Bool)))
-let%test _ = not (est_compatible (Pointeur(Int)) Undefined)
-let%test _ = not (est_compatible (Pointeur(Rat)) Undefined)
-let%test _ = not (est_compatible (Pointeur(Bool)) Undefined)
-
-
+let%test _ = not (est_compatible (Pointeur Int) (Pointeur Rat))
+let%test _ = not (est_compatible (Pointeur Int) (Pointeur Bool))
+let%test _ = not (est_compatible (Pointeur Bool) (Pointeur Int))
+let%test _ = not (est_compatible (Pointeur Bool) (Pointeur Rat))
+let%test _ = not (est_compatible (Pointeur Rat) (Pointeur Int))
+let%test _ = not (est_compatible (Pointeur Rat) (Pointeur Bool))
+let%test _ = not (est_compatible (Pointeur Int) Undefined)
+let%test _ = not (est_compatible (Pointeur Rat) Undefined)
+let%test _ = not (est_compatible (Pointeur Bool) Undefined)
 
 let est_compatible_list lt1 lt2 =
   try List.for_all2 est_compatible lt1 lt2 with Invalid_argument _ -> false
@@ -61,7 +59,12 @@ let%test _ =
   not (est_compatible_list [ Bool; Rat; Bool ] [ Bool; Rat; Bool; Int ])
 
 let getTaille t =
-  match t with Int -> 1 | Bool -> 1 | Rat -> 2 | Pointeur(_) -> failwith "getTaille Pointeur non-défini" | Undefined -> 0
+  match t with
+  | Int -> 1
+  | Bool -> 1
+  | Rat -> 2
+  | Pointeur _ -> failwith "getTaille Pointeur non-défini"
+  | Undefined -> 0
 
 let%test _ = getTaille Int = 1
 let%test _ = getTaille Bool = 1

@@ -110,7 +110,8 @@ let%test_unit "testUtilisation19" =
   with IdentifiantNonDeclare "y" -> ()
 
 let%test_unit "testUtilisation20" =
-    let _ = compiler (pathFichiersRat ^ "testUtilisation20.rat") in ()
+  let _ = compiler (pathFichiersRat ^ "testUtilisation20.rat") in
+  ()
 
 let%test_unit "testRecursiviteVariable" =
   try
