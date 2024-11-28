@@ -45,7 +45,7 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
     | Inf -> "< "
 
   (* Conversio des affectables *)
-  let rec string_of_affectable a = 
+  let rec string_of_affectable a =
     match a with
     | Ident n -> n
     | Dereference ra -> "(*" ^ string_of_affectable ra ^ ")"
@@ -57,7 +57,7 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
         "call " ^ n ^ "("
         ^ List.fold_right (fun i tq -> string_of_expression i ^ tq) le ""
         ^ ") "
-    | Affectable a -> (string_of_affectable a) ^ " "
+    | Affectable a -> string_of_affectable a ^ " "
     | Booleen b -> if b then "true " else "false "
     | Entier i -> string_of_int i ^ " "
     | Unaire (op, e1) -> string_of_unaire op ^ string_of_expression e1 ^ " "
@@ -69,8 +69,8 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
             string_of_expression e1 ^ string_of_binaire b
             ^ string_of_expression e2 ^ " ")
     | PointeurNul -> "nullptr "
-    | Nouveau (t) -> "new " ^ (string_of_type t) ^ " "
-    | Adresse (n) -> "&" ^ n ^ " "
+    | Nouveau t -> "new " ^ string_of_type t ^ " "
+    | Adresse n -> "&" ^ n ^ " "
 
   (* Conversion des instructions *)
   let rec string_of_instruction i =
@@ -78,8 +78,12 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
     | Declaration (t, n, e) ->
         "Declaration  : " ^ string_of_type t ^ " " ^ n ^ " = "
         ^ string_of_expression e ^ "\n"
+    | StatiqueLocale (t, n, e) ->
+        "Variable Locale Statique  : " ^ string_of_type t ^ " " ^ n ^ " = "
+        ^ string_of_expression e ^ "\n"
     | Affectation (a, e) ->
-        "Affectation  : " ^ (string_of_affectable a) ^ " = " ^ string_of_expression e ^ "\n"
+        "Affectation  : " ^ string_of_affectable a ^ " = "
+        ^ string_of_expression e ^ "\n"
     | Constante (n, i) -> "Constante  : " ^ n ^ " = " ^ string_of_int i ^ "\n"
     | Affichage e -> "Affichage  : " ^ string_of_expression e ^ "\n"
     | Conditionnelle (c, t, e) ->
@@ -98,15 +102,21 @@ module PrinterAstSyntax : PrinterAst with module A = AstSyntax = struct
   let string_of_fonction (Fonction (t, n, lp, li)) =
     string_of_type t ^ " " ^ n ^ " ("
     ^ List.fold_right
-        (fun (t, n) tq -> string_of_type t ^ " " ^ n ^ " " ^ tq)
+        (fun (t, n, def) tq ->
+          string_of_type t ^ " " ^ n
+          ^ (match def with
+            | None -> " "
+            | Some e -> " " ^ string_of_expression e ^ " ")
+          ^ tq)
         lp ""
     ^ ") = \n"
     ^ List.fold_right (fun i tq -> string_of_instruction i ^ tq) li ""
     ^ "\n"
 
   (* Conversion des variables globales *)
-  let string_of_globale (Globale(t, n, e)) = 
-    "Variable Globale " ^ (string_of_type t) ^ " " ^ n ^ " : " ^ (string_of_expression e) ^ "\n"
+  let string_of_globale (Globale (t, n, e)) =
+    "Variable Globale " ^ string_of_type t ^ " " ^ n ^ " : "
+    ^ string_of_expression e ^ "\n"
 
   (* Conversion d'un programme Rat *)
   let string_of_programme (Programme (gloables, fonctions, instruction)) =

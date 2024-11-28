@@ -49,7 +49,7 @@ open Ast.AstSyntax
 %type <fonction> fonc
 %type <instruction> i
 %type <typ> typ
-%type <typ*string> param
+%type <typ*string*expression option> param
 %type <expression> e 
 
 (* Type et définition de l'axiome *)
@@ -65,7 +65,7 @@ var : STATIC t=typ n=ID EQUAL exp=e {Globale (t, n, exp)}
 
 fonc : t=typ n=ID PO lp=separated_list(VIRG,param) PF li=bloc {Fonction(t,n,lp,li)}
 
-param : t=typ n=ID  {(t,n)}
+param : t=typ n=ID def=option(d) {(t,n,def)}
 
 bloc : AO li=i* AF      {li}
 
@@ -108,3 +108,5 @@ a :
 | PO STAR a=a PF          {Dereference (a)}
 
 
+d : 
+| EQUAL exp=e             {exp}

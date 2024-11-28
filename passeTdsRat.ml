@@ -12,28 +12,27 @@ type t2 = Ast.AstTds.programme
 (* Paramètre tds : la table des symboles courante *)
 (* Paramètre v : la variable globale à analyser *)
 (* TODO DOC + commentaires *)
-let rec analyse_tds_globale tds (AstSyntax.Globale(t, n, e)) = (
-    match chercherLocalement tds n with
-    | None ->
-        (* L'identifiant n'est pas trouvé dans la tds locale,
-            il n'a donc pas encore été utilisé par une variable globale *)
-        (* Vérification de la bonne utilisation des identifiants dans l'expression *)
-        (* et obtention de l'expression transformée *)
-        let ne = analyse_tds_expression tds e in
-        (* Création de l'information associée à l'identfiant *)
-        let info = InfoVar (n, Undefined, 0, "") in
-        (* Création du pointeur sur l'information *)
-        let ia = ref info in
-        (* Ajout de l'information (pointeur) dans la tds *)
-        ajouter tds n ia;
-        (* Renvoie de la nouvelle déclaration où le nom a été remplacé par l'information
-            et l'expression remplacée par l'expression issue de l'analyse *)
-        failwith "Implement AstTds.Globale (ou réutiliser AstTds.Declaration ?)"
-    | Some _ ->
-        (* L'identifiant est trouvé dans la tds locale,
-            il a donc déjà été déclaré dans le bloc courant *)
-        raise (DoubleDeclaration n))
-
+let rec analyse_tds_globale tds (AstSyntax.Globale (t, n, e)) =
+  match chercherLocalement tds n with
+  | None ->
+      (* L'identifiant n'est pas trouvé dans la tds locale,
+          il n'a donc pas encore été utilisé par une variable globale *)
+      (* Vérification de la bonne utilisation des identifiants dans l'expression *)
+      (* et obtention de l'expression transformée *)
+      let ne = analyse_tds_expression tds e in
+      (* Création de l'information associée à l'identfiant *)
+      let info = InfoVar (n, Undefined, 0, "") in
+      (* Création du pointeur sur l'information *)
+      let ia = ref info in
+      (* Ajout de l'information (pointeur) dans la tds *)
+      ajouter tds n ia;
+      (* Renvoie de la nouvelle déclaration où le nom a été remplacé par l'information
+          et l'expression remplacée par l'expression issue de l'analyse *)
+      failwith "Implement AstTds.Globale (ou réutiliser AstTds.Declaration ?)"
+  | Some _ ->
+      (* L'identifiant est trouvé dans la tds locale,
+          il a donc déjà été déclaré dans le bloc courant *)
+      raise (DoubleDeclaration n)
 
 (* analyse_tds_expression : tds -> AstSyntax.expression -> AstTds.expression *)
 (* Paramètre tds : la table des symboles courante *)
@@ -87,7 +86,8 @@ and analyse_tds_expression tds e =
       AstTds.Unaire (op, ne1)
   | AstSyntax.Booleen b -> AstTds.Booleen b
   | AstSyntax.Entier i -> AstTds.Entier i
-  | AstSyntax.PointeurNul -> failwith "TODO : analyse_tds_expression pointeur nul"
+  | AstSyntax.PointeurNul ->
+      failwith "TODO : analyse_tds_expression pointeur nul"
   | AstSyntax.Nouveau t -> failwith "TODO : analyse_tds_expression nouveau type"
   | AstSyntax.Adresse n -> failwith "TODO : analyse_tds_expression "
 
@@ -122,26 +122,24 @@ let rec analyse_tds_instruction tds oia i =
           (* L'identifiant est trouvé dans la tds locale,
              il a donc déjà été déclaré dans le bloc courant *)
           raise (DoubleDeclaration n))
-
-  | AstSyntax.StatiqueLocale (t, n, e) -> (  
-    (* On récupère l'information associée à la fonction dans laquelle on déclare *)
-    match oia with
-    (* Il n'y a pas d'information -> l'instruction est hors d'une fonction : erreur *)
-    | None ->
-        raise VariableLocaleStatiqueHorsFonction
-        (* Il y a une information -> l'instruction est dans une fonction *)
-    | Some ia ->
-        (* Analyse de l'expression *)
-        let ne = analyse_tds_expression tds e in
-        (* Création de l'information associée à l'identfiant *)
-        let info = InfoVar (n, Undefined, 0, "") in
-        (* Création du pointeur sur l'information *)
-        let ia = ref info in
-        (* Ajout de l'information (pointeur) dans la tds *)
-        ajouter tds n ia;
-        failwith "TODO : AstTds.StatiqueLocale"
-        (*AstTds.StatiqueLocale (ne, ia)*))
-  
+  | AstSyntax.StatiqueLocale (t, n, e) -> (
+      (* On récupère l'information associée à la fonction dans laquelle on déclare *)
+      match oia with
+      (* Il n'y a pas d'information -> l'instruction est hors d'une fonction : erreur *)
+      | None ->
+          raise VariableLocaleStatiqueHorsFonction
+          (* Il y a une information -> l'instruction est dans une fonction *)
+      | Some ia ->
+          (* Analyse de l'expression *)
+          let ne = analyse_tds_expression tds e in
+          (* Création de l'information associée à l'identfiant *)
+          let info = InfoVar (n, Undefined, 0, "") in
+          (* Création du pointeur sur l'information *)
+          let ia = ref info in
+          (* Ajout de l'information (pointeur) dans la tds *)
+          ajouter tds n ia;
+          failwith "TODO : AstTds.StatiqueLocale"
+          (*AstTds.StatiqueLocale (ne, ia)*))
   | AstSyntax.Affectation (a, e) ->
       failwith "TODO analyse_tds_instruction affectation"
       (*
@@ -243,9 +241,9 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction (t, n, lp, li)) =
       (* On crée une tds pour la fonction a partir de la main tds **)
       let tdsFunc = creerTDSFille maintds in
       (* On extrait les types des paramètres a partir de la liste des paramètres*)
-      let typesArgsList = List.map (fun (typ, _) -> typ) lp in
+      let typesArgsList = List.map (fun (typ, _, _) -> typ) lp in
       (* On extrait les noms des paramètres a partir de la liste des paramètres*)
-      let nomArgsList = List.map (fun (_, nom) -> nom) lp in
+      let nomArgsList = List.map (fun (_, nom, _) -> nom) lp in
 
       (* Fonction auxilliaire pour rajouter un paramètre *)
       (* paramètre type: le type du paramètre*)
@@ -288,7 +286,7 @@ let analyse_tds_fonction maintds (AstSyntax.Fonction (t, n, lp, li)) =
 (* Erreur si mauvaise utilisation des identifiants *)
 let analyser (AstSyntax.Programme (globales, fonctions, prog)) =
   let tds = creerTDSMere () in
-  let ng = List.map (analyse_tds_globale tds) globales in 
+  let ng = List.map (analyse_tds_globale tds) globales in
   let nf = List.map (analyse_tds_fonction tds) fonctions in
   let nb = analyse_tds_bloc tds None prog in
   AstTds.Programme (nf, nb)

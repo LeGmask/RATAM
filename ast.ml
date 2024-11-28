@@ -21,7 +21,7 @@ module AstSyntax = struct
   type binaire = Fraction | Plus | Mult | Equ | Inf
 
   (* Affectables de Rat Etendu *)
-  type affectable  = Ident of string | Dereference of affectable
+  type affectable = Ident of string | Dereference of affectable
 
   (* Expressions de Rat *)
   type expression =
@@ -37,14 +37,12 @@ module AstSyntax = struct
     | Unaire of unaire * expression
     (* Opération binaire représentée par l'opérateur, l'opérande gauche et l'opérande droite *)
     | Binaire of binaire * expression * expression
-(* Pointeur nul *)
+    (* Pointeur nul *)
     | PointeurNul
     (* Allocation d'un nouvel objet *)
     | Nouveau of typ
     (* Adresse mémoire *)
     | Adresse of string
-
-
 
   (* Instructions de Rat *)
   type bloc = instruction list
@@ -72,8 +70,11 @@ module AstSyntax = struct
   type globale = Globale of typ * string * expression
 
   (* Structure des fonctions de Rat *)
-  (* type de retour - nom - liste des paramètres (association type et nom) - corps de la fonction *)
-  type fonction = Fonction of typ * string * (typ * string) list * bloc
+  (* type de retour - nom -
+     liste des paramètres (association type , nom, et une option d'expression par défaut)
+     - corps de la fonction *)
+  type fonction =
+    | Fonction of typ * string * (typ * string * expression option) list * bloc
 
   (* Structure d'un programme Rat *)
   (* liste de fonction - programme principal *)
