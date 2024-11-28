@@ -1,6 +1,5 @@
 open Ast
 
-
 (* Trouve l'identifiant dans un affectable *)
 (* Paramètre sa : affectable *)
 (* Renvoit l'identifiant*)
@@ -29,3 +28,5 @@ let map_couple proc elems =
       let a, b = proc e in
       (a :: qa, b :: qb))
     elems ([], [])
+  match sa with Ident n -> n | Dereference ssa -> trouver_id_racine ssa
+(* récupération de l'identifiant de l'affectable *)
