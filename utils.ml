@@ -9,7 +9,7 @@ let rec trouver_id_racine (sa : AstSyntax.affectable) =
   | Dereference ssa -> trouver_id_racine ssa
 
   
-  (* récupération de l'identifiant de l'affectable *)(* split ('a * 'b) list -> ('a list * 'b list )*)
+(* split ('a * 'b) list -> ('a list * 'b list )*)
 (* Paramètre cl : la liste à traiter *)
 (* Sépare une liste de couple en couple de liste *)
 (* Conserve l'ordre des éléments *)
@@ -28,5 +28,4 @@ let map_couple proc elems =
       let a, b = proc e in
       (a :: qa, b :: qb))
     elems ([], [])
-  match sa with Ident n -> n | Dereference ssa -> trouver_id_racine ssa
-(* récupération de l'identifiant de l'affectable *)
+

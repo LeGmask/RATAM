@@ -61,7 +61,7 @@ main : lfi=prog EOF     {lfi}
 
 prog : lv=var* lf=fonc* ID li=bloc  {Programme (lv,lf,li)}
 
-var : STATIC t=typ n=ID EQUAL exp=e {Globale (t, n, exp)} 
+var : STATIC t=typ n=ID EQUAL exp=e PV {Globale (t, n, exp)} 
 
 fonc : t=typ n=ID PO lp=separated_list(VIRG,param) PF li=bloc {Fonction(t,n,lp,li)}
 
