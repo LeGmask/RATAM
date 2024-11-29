@@ -1,0 +1,30 @@
+name: tests
+
+on:
+  - push
+  - pull_request
+
+permissions: read-all
+
+jobs:
+  runtest:
+    strategy:
+      fail-fast: false
+      matrix:
+        test:
+          - gestion_id
+          - type
+          - placement
+          - tam
+        functions:
+          - sans_fonction
+          - avec_fonction
+
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout tree
+        uses: actions/checkout@v4
+
+      - name: Tests ${{ matrix.test }} ${{ matrix.functions }}
+        run: dune runtest tests/${{ matrix.test }}/${{ matrix.functions }}
