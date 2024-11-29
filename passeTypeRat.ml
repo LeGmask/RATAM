@@ -4,6 +4,7 @@ open Tds
 open Exceptions
 open Ast
 open Type
+open Utils
 
 type t1 = Ast.AstTds.programme
 type t2 = Ast.AstType.programme
@@ -16,16 +17,12 @@ type t2 = Ast.AstType.programme
 let rec analyse_type_expression e =
   match e with
   | AstTds.AppelFonction (info, le) -> (
-      (* récupérer type retour (tr) et types paramètres (tp) choisi *)
-      (* analyser la liste des expressions [(e1,t1);...;(en,tn)]*)
-      (* comparer les types des expressions avec les types attendus (fonction fourni estCompatibleListe dans type.mli) *)
-      (* (AstType.AppelFonction(info, [ne1, ..., nep]), typeretour) *)
       match !info with
       | InfoFun (_, typ, argstyp) ->
-          (* TODO REFACTOR CE CODE EST MOCHE *)
-          let zip = List.map analyse_type_expression le in
-          let lne = List.map fst zip in
-          let lte = List.map snd zip in
+          (* analyse des expressions et récupérations de leurs types *)
+          (* lne = liste des nouvelles expressions après analyse *)
+          (* lte = liste des types des expressions après analyse *)
+          let lne, lte = map_couple analyse_type_expression le in
           if est_compatible_list lte argstyp then
             (AstType.AppelFonction (info, lne), typ)
           else raise (TypesParametresInattendus (lte, argstyp))
@@ -129,9 +126,8 @@ and analyse_type_bloc li = List.map analyse_type_instruction li
    en une fonction de type AstType.fonction *)
 (* Erreur si mauvaise utilisation des identifiants *)
 let analyse_type_fonction (AstTds.Fonction (t, info, lp, li)) =
-  (* lp = [(t1,i1);...;(tn,in)] *)
-  let typeList = List.map fst lp in
-  let infosList = List.map snd lp in
+  (* récupérations des types et les infos des paramètres de la fonction *)
+  let typeList, infosList = split lp in
   (* ajouter les types des paramètres dans leurs info_asts*)
   List.iter2 modifier_type_variable typeList infosList;
   (* ajouter t et [t1;...;tn] à i *)
@@ -140,6 +136,9 @@ let analyse_type_fonction (AstTds.Fonction (t, info, lp, li)) =
   let nli = analyse_type_bloc li in
   AstType.Fonction (info, infosList, nli)
 
+(* analyse_type_fonctions -> AstTds.fonction list -> AstType.fonction list *)
+(* Paramètre lf : la liste des fonctions à analyser *)
+(* Analyse les fonctions d'une liste de AstTds.fonction, et les transforme en une liste de AstTye.fonction *)
 let analyse_type_fonctions lf = List.map analyse_type_fonction lf
 
 (* analyser : AstTds.programme -> AstType.programme *)
