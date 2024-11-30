@@ -1,0 +1,8 @@
+int f (int a = 5){
+  return a;
+}
+
+test{
+  print f(1);
+  print f();
+}
