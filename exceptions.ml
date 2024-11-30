@@ -15,3 +15,6 @@ exception TypeBinaireInattendu of binaire * typ * typ
 
 (* Utilisation illégale de return dans le programme principal *)
 exception RetourDansMain
+
+(* Déclaration illégale de variables statiques locales hors d'une fonction *)
+exception VariableLocaleStatiqueHorsFonction
