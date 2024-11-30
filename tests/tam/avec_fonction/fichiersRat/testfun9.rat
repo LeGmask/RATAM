@@ -1,0 +1,12 @@
+int f (){
+  static int a = 0;
+  a = (a + 1)
+  return a;
+}
+
+test{
+  print f();
+  print f();
+  print f();
+  print f();
+}

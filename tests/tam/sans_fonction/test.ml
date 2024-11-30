@@ -88,3 +88,11 @@ let%expect_test "factiter" =
 let%expect_test "complique" =
   runtam (pathFichiersRat ^ "complique.rat");
   [%expect {| [9/4][27/14][27/16][3/2] |}]
+
+let%expect_test "testPointeur1" =
+runtam (pathFichiersRat ^ "testPointeur1.rat");
+[%expect {| 5 |}]
+
+let%expect_test "testPointeur2" =
+runtam (pathFichiersRat ^ "testPointeur2.rat");
+[%expect {| 8 |}]
