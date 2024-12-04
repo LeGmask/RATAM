@@ -56,14 +56,13 @@ module CompilateurRat =
 *)
 
 (* + passe de placement mémoire *)
-
-module CompilateurRat =
-  Compilateur (PasseTdsRat) (PasseTypeRat) (PassePlacementRat) (PasseCodeNop)
+(*
+module CompilateurRat = Compilateur (PasseTdsRat) (PasseTypeRat) (PassePlacementRat) (PasseCodeNop)
+*)
 
 (* + passe de génération de code -> compilateur complet *)
-(*
 module CompilateurRat = Compilateur (PasseTdsRat) (PasseTypeRat) (PassePlacementRat) (PasseCodeRatToTam)
-*)
+
 
 open Lexing
 
@@ -108,3 +107,4 @@ let compilerVersFichier ratfile tamfile =
   let chan = open_out tamfile in
   output_string chan tamcode;
   close_out chan
+  
