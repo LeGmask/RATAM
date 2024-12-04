@@ -12,7 +12,7 @@ type t2 = string
 let rec analyse_code_expression (e : AstPlacement.expression) : string = 
     match e with
     | AppelFonction (info, le) -> (
-        let codeExpresssions = List.fold_left (fun acc e -> acc ^(analyse_code_expression e)) "" le in
+        let codeExpresssions = List.fold_left (fun acc e -> acc ^ (analyse_code_expression e)) "" le in
         match !info with
         | InfoFun(nom, _, _) -> codeExpresssions ^ (call "SB" nom)
         | _ -> failwith "erreur interne")
@@ -94,9 +94,10 @@ and analyse_code_bloc (li, taille) =
     let sli = List.fold_left (fun acc i -> acc ^ (analyse_code_instruction i)) "" li in 
     sli ^ pop 0 taille
 
-let analyse_code_fonction (AstPlacement.Fonction (info, parInfol, bloc)) =
+let analyse_code_fonction (AstPlacement.Fonction (info, _, bloc)) =
     match !info with
-    | InfoFun(nom, typ, argsType) -> "; fonction " ^ nom ^ "\n ; code début fonction\n" ^ (analyse_code_bloc bloc) ^ "; fin fonction\n"
+    | InfoFun(nom, _, _) -> (
+        (label nom) ^ (analyse_code_bloc bloc)) ^ halt
     | _ -> failwith "erreur interne"
 
 let analyser (AstPlacement.Programme (fonctions, prog)) = 
