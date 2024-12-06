@@ -40,9 +40,9 @@ end
 
 (* Compilateur créant l'AST *)
 (*
-module CompilateurRat = Compilateur (PasseTdsNop) (PasseTypeNop) (PassePlacementNop) (PasseCodeNop)
+module CompilateurRat =
+  Compilateur (PasseTdsNop) (PasseTypeNop) (PassePlacementNop) (PasseCodeNop)
 *)
-
 (* + passe de résolution des identifiants *)
 (*
 module CompilateurRat =
@@ -61,8 +61,10 @@ module CompilateurRat = Compilateur (PasseTdsRat) (PasseTypeRat) (PassePlacement
 *)
 
 (* + passe de génération de code -> compilateur complet *)
-module CompilateurRat = Compilateur (PasseTdsRat) (PasseTypeRat) (PassePlacementRat) (PasseCodeRatToTam)
 
+module CompilateurRat =
+  Compilateur (PasseTdsRat) (PasseTypeRat) (PassePlacementRat)
+    (PasseCodeRatToTam)
 
 open Lexing
 
@@ -107,4 +109,3 @@ let compilerVersFichier ratfile tamfile =
   let chan = open_out tamfile in
   output_string chan tamcode;
   close_out chan
-  
