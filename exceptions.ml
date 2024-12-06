@@ -17,4 +17,10 @@ exception TypeBinaireInattendu of binaire * typ * typ
 exception RetourDansMain
 
 (* Déclaration illégale de variables statiques locales hors d'une fonction *)
-exception VariableLocaleStatiqueHorsFonction
+exception VariableLocaleStatiqueHorsFonction of string
+
+(* Déréférencement d'un variable autre qu'un pointeur *)
+exception DerefereceNonPointeur
+
+(* Affichage d'un type non supporté *)
+exception AffichageTypeNonSupporte

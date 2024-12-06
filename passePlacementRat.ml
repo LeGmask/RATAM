@@ -20,8 +20,8 @@ let rec analyse_placement_instruction i depl reg =
           let taille = getTaille typ in
           modifier_adresse_variable depl reg info;
           (AstPlacement.Declaration (info, e), taille)
-      | _ -> failwith "erreur interne")
-  | AstType.Affectation (info, e) -> (AstPlacement.Affectation (info, e), 0)
+      | _ -> failwith "erreur interne 10")
+  | AstType.Affectation (aff, e) -> (AstPlacement.Affectation (aff, e), 0)
   | AstType.AffichageInt e -> (AstPlacement.AffichageInt e, 0)
   | AstType.AffichageRat e -> (AstPlacement.AffichageRat e, 0)
   | AstType.AffichageBool e -> (AstPlacement.AffichageBool e, 0)
@@ -40,7 +40,7 @@ let rec analyse_placement_instruction i depl reg =
             List.fold_right (fun typ acc -> acc + getTaille typ) argstyp 0
           in
           (AstPlacement.Retour (e, tr, tp), 0)
-      | _ -> failwith "erreur interne")
+      | _ -> failwith "erreur interne 9")
   | AstType.Empty -> (AstPlacement.Empty, 0)
 
 (* analyse_placement_bloc : AstType.bloc -> AstPlacement.bloc *)
@@ -68,7 +68,7 @@ let analyse_placement_fonction (AstType.Fonction (info, lp, li)) =
   let get_taille_param p =
     match !p with
     | InfoVar (_, typ, _, _) -> getTaille typ
-    | _ -> failwith "erreur interne"
+    | _ -> failwith "erreur interne 8"
     (* analyse des paramètres *)
   in
 

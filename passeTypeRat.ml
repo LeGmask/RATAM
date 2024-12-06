@@ -9,6 +9,21 @@ open Utils
 type t1 = Ast.AstTds.programme
 type t2 = Ast.AstType.programme
 
+(* analyse_type_affectable -> AstTds.affectable -> ( AstType.affectable * typ) *)
+(* Paramètre a : l'affectable *)
+(* TODO DOC *)
+let rec analyse_type_affectable a =
+  match a with
+  | AstTds.Dereference a -> (
+      let na, ta = analyse_type_affectable a in
+      match ta with
+      | Pointeur t -> (AstType.Dereference na, t)
+      | _ -> raise DerefereceNonPointeur)
+  | AstTds.Ident i -> (
+      match !i with
+      | InfoVar (_, typ, _, _) -> (AstType.Ident i, typ)
+      | _ -> failwith "erreur interne 7")
+
 (* analyse_type_expression : AstTds.expression -> AstType.expression *)
 (* Paramètre e : l'expression à analyser *)
 (* Vérifie le bon typage de l'expression et tranforme l'expression
@@ -26,11 +41,10 @@ let rec analyse_type_expression e =
           if est_compatible_list lte argstyp then
             (AstType.AppelFonction (info, lne), typ)
           else raise (TypesParametresInattendus (lte, argstyp))
-      | _ -> failwith "erreur interne")
-  | AstTds.Ident info -> (
-      match !info with
-      | InfoVar (_, typ, _, _) -> (AstType.Ident info, typ)
-      | _ -> failwith "erreur interne")
+      | _ -> failwith "erreur interne 6")
+  | AstTds.Affectable aff ->
+      let na, natyp = analyse_type_affectable aff in
+      (AstType.Affectable na, natyp)
   | AstTds.Unaire (op, e1) -> (
       let ne1, te1 = analyse_type_expression e1 in
       match te1 with
@@ -57,6 +71,12 @@ let rec analyse_type_expression e =
       | _ -> raise (TypeBinaireInattendu (op, te1, te2)))
   | AstTds.Booleen b -> (AstType.Booleen b, Bool)
   | AstTds.Entier i -> (AstType.Entier i, Int)
+  | AstTds.PointeurNul -> (AstType.PointeurNul, Pointeur Undefined)
+  | AstTds.Nouveau typ -> (AstType.Nouveau typ, Pointeur typ)
+  | AstTds.Adresse info -> (
+      match !info with
+      | InfoVar (_, typ, _, _) -> (AstType.Adresse info, Pointeur typ)
+      | _ -> failwith "erreur interne 4")
 
 (* analyse_type_instruction : AstTds.instruction -> AstType.instruction *)
 (* Paramètre i : l'instruction à analyser *)
@@ -77,23 +97,19 @@ let rec analyse_type_instruction i =
         | InfoVar _ ->
             modifier_type_variable t info;
             AstType.Declaration (info, ne)
-        | _ -> failwith "erreur interne")
-  | AstTds.Affectation (info, e) -> (
+        | _ -> failwith "erreur interne 1")
+  | AstTds.Affectation (aff, e) ->
+      let na, natyp = analyse_type_affectable aff in
       let ne, netyp = analyse_type_expression e in
-      match !info with
-      | InfoVar (_, typ, _, _) ->
-          if typ = netyp then AstType.Affectation (info, ne)
-          else raise (TypeInattendu (netyp, typ))
-      | _ -> failwith "erreur interne"
-      (* on compare t et tid, si différents alors erreur *)
-      (* AstType.Affectation(i,ne) *))
+      if est_compatible natyp netyp then AstType.Affectation (na, ne)
+      else raise (TypeInattendu (netyp, natyp))
   | AstTds.Affichage e -> (
       let ne, netyp = analyse_type_expression e in
       match netyp with
       | Int -> AstType.AffichageInt ne
       | Bool -> AstType.AffichageBool ne
       | Rat -> AstType.AffichageRat ne
-      | _ -> failwith "erreur interne" (*car ne devrait pas être possible *))
+      | _ -> raise AffichageTypeNonSupporte)
   | AstTds.Conditionnelle (c, t, e) ->
       let nc, nctyp = analyse_type_expression c in
       if nctyp = Bool then
@@ -111,7 +127,7 @@ let rec analyse_type_instruction i =
       | InfoFun (_, typret, _) ->
           if typret <> netyp then raise (TypeInattendu (netyp, typret))
           else AstType.Retour (ne, ia)
-      | _ -> failwith "erreur interne")
+      | _ -> failwith "erreur interne 3")
   | AstTds.Empty -> AstType.Empty
 
 (* analyse_type_bloc : AstTds.bloc -> AstType.bloc *)

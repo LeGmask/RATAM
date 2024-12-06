@@ -85,17 +85,22 @@ end
 (* AST après la phase d'analyse des identifiants *)
 (* ********************************************* *)
 module AstTds = struct
+  (* Affectables de Rat Etendu *)
+  type affectable = Ident of Tds.info_ast | Dereference of affectable
+
   (* Expressions existantes dans notre langage *)
   (* ~ expression de l'AST syntaxique où les noms des identifiants ont été
      remplacés par les informations associées aux identificateurs *)
   type expression =
     | AppelFonction of Tds.info_ast * expression list
-    | Ident of Tds.info_ast
-      (* le nom de l'identifiant est remplacé par ses informations *)
+    | Affectable of affectable
     | Booleen of bool
     | Entier of int
     | Unaire of AstSyntax.unaire * expression
     | Binaire of AstSyntax.binaire * expression * expression
+    | PointeurNul
+    | Nouveau of typ
+    | Adresse of Tds.info_ast
 
   (* instructions existantes dans notre langage *)
   (* ~ instruction de l'AST syntaxique où les noms des identifiants ont été
@@ -106,7 +111,7 @@ module AstTds = struct
   and instruction =
     | Declaration of typ * Tds.info_ast * expression
       (* le nom de l'identifiant est remplacé par ses informations *)
-    | Affectation of Tds.info_ast * expression
+    | Affectation of affectable * expression
       (* le nom de l'identifiant est remplacé par ses informations *)
     | Affichage of expression
     | Conditionnelle of expression * bloc * bloc
@@ -128,6 +133,9 @@ end
 (* AST après la phase de typage *)
 (* ******************************* *)
 module AstType = struct
+  (* Affectables de Rat Etendu *)
+  type affectable = Ident of Tds.info_ast | Dereference of affectable
+
   (* Opérateurs unaires de Rat - résolution de la surcharge *)
   type unaire = Numerateur | Denominateur
 
@@ -146,11 +154,14 @@ module AstType = struct
   (* = expression de AstTds *)
   type expression =
     | AppelFonction of Tds.info_ast * expression list
-    | Ident of Tds.info_ast
+    | Affectable of affectable
     | Booleen of bool
     | Entier of int
     | Unaire of unaire * expression
     | Binaire of binaire * expression * expression
+    | PointeurNul
+    | Nouveau of typ
+    | Adresse of Tds.info_ast
 
   (* instructions existantes Rat *)
   (* = instruction de AstTds + informations associées aux identificateurs, mises à jour *)
@@ -159,7 +170,7 @@ module AstType = struct
 
   and instruction =
     | Declaration of Tds.info_ast * expression
-    | Affectation of Tds.info_ast * expression
+    | Affectation of affectable * expression
     | AffichageInt of expression
     | AffichageRat of expression
     | AffichageBool of expression
@@ -179,6 +190,8 @@ end
 (* AST après la phase de placement *)
 (* ******************************* *)
 module AstPlacement = struct
+  type affectable = AstType.affectable
+
   (* Expressions existantes dans notre langage *)
   (* = expression de AstType  *)
   type expression = AstType.expression
@@ -188,7 +201,7 @@ module AstPlacement = struct
 
   and instruction =
     | Declaration of Tds.info_ast * expression
-    | Affectation of Tds.info_ast * expression
+    | Affectation of affectable * expression
     | AffichageInt of expression
     | AffichageRat of expression
     | AffichageBool of expression

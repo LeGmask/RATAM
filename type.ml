@@ -13,6 +13,8 @@ let est_compatible t1 t2 =
   | Bool, Bool -> true
   | Int, Int -> true
   | Rat, Rat -> true
+  | Pointeur _, Pointeur Undefined -> true
+  | Pointeur Undefined, Pointeur _ -> true
   | Pointeur a, Pointeur b -> a = b
   | _ -> false
 
@@ -22,6 +24,12 @@ let%test _ = est_compatible Rat Rat
 let%test _ = est_compatible (Pointeur Int) (Pointeur Int)
 let%test _ = est_compatible (Pointeur Bool) (Pointeur Bool)
 let%test _ = est_compatible (Pointeur Rat) (Pointeur Rat)
+let%test _ = est_compatible (Pointeur Int) (Pointeur Undefined)
+let%test _ = est_compatible (Pointeur Rat) (Pointeur Undefined)
+let%test _ = est_compatible (Pointeur Bool) (Pointeur Undefined)
+let%test _ = est_compatible (Pointeur Undefined) (Pointeur Int)
+let%test _ = est_compatible (Pointeur Undefined) (Pointeur Rat)
+let%test _ = est_compatible (Pointeur Undefined) (Pointeur Bool)
 let%test _ = not (est_compatible Int Bool)
 let%test _ = not (est_compatible Bool Int)
 let%test _ = not (est_compatible Int Rat)
@@ -63,7 +71,7 @@ let getTaille t =
   | Int -> 1
   | Bool -> 1
   | Rat -> 2
-  | Pointeur _ -> failwith "getTaille Pointeur non-défini"
+  | Pointeur _ -> 1
   | Undefined -> 0
 
 let%test _ = getTaille Int = 1
