@@ -14,7 +14,7 @@ let rec analyse_code_affectable_lecture (aff : AstPlacement.affectable) =
   | Ident info -> (
       match !info with
       | InfoVar (_, typ, d, reg) -> loada d reg ^ loadi (getTaille typ)
-      | _ -> failwith "erreur interne")
+      | _ -> failwith "erreur interne 18")
   | Dereference sa ->
       let csa = analyse_code_affectable_lecture sa in
       csa ^ loadi 1
@@ -27,7 +27,7 @@ let rec analyse_code_affectable_ecriture (aff : AstPlacement.affectable) acc =
       | InfoVar (_, typ, d, reg) ->
           let s = getTaille typ in
           loada d reg ^ acc ^ storei s
-      | _ -> failwith "erreur interne")
+      | _ -> failwith "erreur interne 17")
 
 let rec analyse_code_expression (e : AstPlacement.expression) : string =
   match e with
@@ -37,7 +37,7 @@ let rec analyse_code_expression (e : AstPlacement.expression) : string =
       in
       match !info with
       | InfoFun (nom, _, _) -> codeExpresssions ^ call "SB" nom
-      | _ -> failwith "erreur interne")
+      | _ -> failwith "erreur interne 16")
   | Affectable aff -> analyse_code_affectable_lecture aff
   | Booleen b -> loadl_int (if b then 1 else 0)
   | Entier i -> loadl_int i
@@ -76,7 +76,7 @@ let rec analyse_code_instruction (i : AstPlacement.instruction) =
           let ec = analyse_code_expression exp in
           let s = getTaille typ in
           push s ^ ec ^ store s d reg
-      | _ -> failwith "erreur interne")
+      | _ -> failwith "erreur interne 14")
   | Affectation (aff, exp) ->
       let ec = analyse_code_expression exp in
       let ca = analyse_code_affectable_ecriture aff "" in
@@ -119,7 +119,7 @@ and analyse_code_bloc (li, taille) =
 let analyse_code_fonction (AstPlacement.Fonction (info, _, bloc)) =
   match !info with
   | InfoFun (nom, _, _) -> (label nom ^ analyse_code_bloc bloc) ^ halt
-  | _ -> failwith "erreur interne"
+  | _ -> failwith "erreur interne 15"
 
 let analyser (AstPlacement.Programme (fonctions, prog)) =
   let funsStr =

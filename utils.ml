@@ -17,3 +17,19 @@ let map_couple proc elems =
       let a, b = proc e in
       (a :: qa, b :: qb))
     elems ([], [])
+
+(* TODO *)
+let rec mergeOptions l1 l2 =
+  match (l1, l2) with
+  | e :: q1, _ :: q2 ->
+      e :: mergeOptions q1 q2
+      (* on préfère la valeur explicitement fournie à celle par défaut *)
+  | [], Some e :: q2 ->
+      e
+      :: mergeOptions []
+           q2 (* on utilise la valeur par défaut si pas de valeur explicite *)
+  | [], None :: _ ->
+      []
+      (* ce cas correspond à une erreur de programmation (pas assez de paramètre & pas de valeur par défaut)*)
+  | _, [] -> l1
+(* ce cas correspond à une erreur de programmation (plus de paramètre que la fonction demande )*)
