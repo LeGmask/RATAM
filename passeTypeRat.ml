@@ -87,7 +87,7 @@ let rec analyse_type_instruction i =
   | AstTds.Declaration (t, info, e) -> (
       (* traitement de l'expression *)
       let ne, netyp = analyse_type_expression e in
-      if netyp <> t then
+      if not (est_compatible t netyp) then
         (* les types sont imcompatibles *)
         raise (TypeInattendu (netyp, t))
       else
