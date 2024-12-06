@@ -110,8 +110,10 @@ let%test_unit "testUtilisation19" =
   with IdentifiantNonDeclare "y" -> ()
 
 let%test_unit "testUtilisation20" =
-  let _ = compiler (pathFichiersRat ^ "testUtilisation20.rat") in
-  ()
+  try
+    let _ = compiler (pathFichiersRat ^ "testUtilisation20.rat") in
+    raise ErreurNonDetectee
+  with VariableLocaleStatiqueHorsFonction "id" -> ()
 
 let%test_unit "testRecursiviteVariable" =
   try
