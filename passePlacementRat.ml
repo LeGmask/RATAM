@@ -96,18 +96,35 @@ let analyse_placement_fonction (AstType.Fonction (info, lp, li)) d =
   let nb, delta = analyse_placement_bloc li 3 "LB" d in
   (AstPlacement.Fonction (info, lp, nb), delta)
 
+let analyse_placement_globale (AstType.Globale (info, exp)) depl =
+  match !info with
+  | InfoVar (_, typ, _, _) ->
+      let taille = getTaille typ in
+      modifier_adresse_variable depl "SB" info;
+      (AstPlacement.Globale (info, exp), taille)
+  | _ -> failwith "erreur interne : analyse_placement_globale pas InfoVar"
+
 (* analyser : AstType.programme -> AstPlacement.programme *)
 (* Paramètre : le programme à analyser *)
 (* Effectue le placement mémoire et transforme le programme
    en un programme de type AstPlacement.programme *)
 (* Erreur si bug dans passes précédantes *)
-let analyser (AstType.Programme (fonctions, prog)) =
+let analyser (AstType.Programme (globales, fonctions, prog)) =
+  let offset, ng =
+    List.fold_left_map
+      (fun depl g ->
+        let ng, delta = analyse_placement_globale g depl in
+        (depl + delta, ng))
+      0 globales
+  in
   let delta, nfs =
     List.fold_left_map
       (fun d fonction ->
         let nf, delta = analyse_placement_fonction fonction d in
         (d + delta, nf))
-      0 fonctions
+      offset fonctions
   in
-  let np, statique_delta = analyse_placement_bloc prog delta "SB" delta in
-  AstPlacement.Programme (nfs, np, statique_delta)
+  (* 0 car normalement il n'y a pas de déclaration de variable statique locales en dehors des fonctions 
+  ce qui a déjà été vérifié lors de la phase de gestion_id *)
+  let np, _ = analyse_placement_bloc prog delta "SB" 0 in
+  AstPlacement.Programme (ng, nfs, np, delta)

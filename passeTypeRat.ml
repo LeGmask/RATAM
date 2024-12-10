@@ -171,11 +171,22 @@ let analyse_type_fonction (AstTds.Fonction (t, info, lp, li)) =
 (* Analyse les fonctions d'une liste de AstTds.fonction, et les transforme en une liste de AstTye.fonction *)
 let analyse_type_fonctions lf = List.map analyse_type_fonction lf
 
+(* analyse_type_globale : AstTds.globale -> AstType.Globale *)
+(* Paramètre g : la variable globale *)
+(* TODO DOC *)
+let analyse_type_globale (AstTds.Globale (t, ia, e)) =
+  let ne, netyp = analyse_type_expression e in
+  if est_compatible t netyp then (
+    modifier_type_variable t ia;
+    AstType.Globale (ia, ne))
+  else raise (TypeInattendu (netyp, t))
+
 (* analyser : AstTds.programme -> AstType.programme *)
 (* Paramètre : le programme à analyser *)
 (* Vérifie le bon typage et transforme le programme en un programme de type AstType.programme *)
 (* Erreur si types imcompatibles *)
-let analyser (AstTds.Programme (fonctions, prog)) =
+let analyser (AstTds.Programme (globales, fonctions, prog)) =
+  let nge = List.map analyse_type_globale globales in
   let nfs = analyse_type_fonctions fonctions in
   let np = analyse_type_bloc prog in
-  AstType.Programme (nfs, np)
+  AstType.Programme (nge, nfs, np)

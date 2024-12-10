@@ -34,7 +34,7 @@ let rec analyse_tds_affectable tds a en_ecriture =
 (* Paramètre v : la variable globale à analyser *)
 (* TODO DOC + commentaires *)
 let rec analyse_tds_globale tds tdd (AstSyntax.Globale (t, n, e)) =
-  match chercherLocalement tds n with
+  match chercherGlobalement tds n with
   | None ->
       (* L'identifiant n'est pas trouvé dans la tds locale,
           il n'a donc pas encore été utilisé par une variable globale *)
@@ -49,7 +49,7 @@ let rec analyse_tds_globale tds tdd (AstSyntax.Globale (t, n, e)) =
       ajouter tds n ia;
       (* Renvoie de la nouvelle déclaration où le nom a été remplacé par l'information
           et l'expression remplacée par l'expression issue de l'analyse *)
-      failwith "Implement AstTds.Globale (ou réutiliser AstTds.Declaration ?)"
+      AstTds.Globale (t, ia, ne)
   | Some _ ->
       (* L'identifiant est trouvé dans la tds locale,
           il a donc déjà été déclaré dans le bloc courant *)
@@ -341,4 +341,4 @@ let analyser (AstSyntax.Programme (globales, fonctions, prog)) =
   let ng = List.map (analyse_tds_globale tds tdd) globales in
   let nf = List.map (analyse_tds_fonction tds tdd) fonctions in
   let nb = analyse_tds_bloc tds tdd None prog in
-  AstTds.Programme (nf, nb)
+  AstTds.Programme (ng, nf, nb)

@@ -131,7 +131,14 @@ let analyse_code_fonction (AstPlacement.Fonction (info, _, bloc)) =
   | InfoFun (nom, _, _) -> (label nom ^ analyse_code_bloc bloc) ^ halt
   | _ -> failwith "erreur interne 15"
 
-let analyser (AstPlacement.Programme (fonctions, prog, statique_delta)) =
+let analyse_code_globale (AstPlacement.Globale (info, exp)) =
+  analyse_code_instruction (AstPlacement.Declaration (info, exp))
+
+let analyser
+    (AstPlacement.Programme (globales, fonctions, prog, statique_delta)) =
+  let globalesStr =
+    List.fold_left (fun acc g -> acc ^ analyse_code_globale g) "" globales
+  in
   let funsStr =
     List.fold_left
       (fun acc f -> acc ^ " " ^ analyse_code_fonction f)
@@ -139,6 +146,8 @@ let analyser (AstPlacement.Programme (fonctions, prog, statique_delta)) =
   in
   let blocStr = analyse_code_bloc prog in
   getEntete () ^ funsStr ^ label "main"
-  (* On init les variables statiques avec des 0 *)
+  (* On initialise les variables globales *)
+  ^ globalesStr
+  (* On réserve l'espace des variables statiques et le rempli avec des 0 *)
   ^ push statique_delta
   ^ blocStr ^ halt

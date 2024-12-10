@@ -126,8 +126,10 @@ module AstTds = struct
   type fonction =
     | Fonction of typ * Tds.info_ast * (typ * Tds.info_ast) list * bloc
 
+  type globale = Globale of typ * Tds.info_ast * expression
+
   (* Structure d'un programme dans notre langage *)
-  type programme = Programme of fonction list * bloc
+  type programme = Programme of globale list * fonction list * bloc
 end
 
 (* ******************************* *)
@@ -183,9 +185,10 @@ module AstType = struct
 
   (* informations associées à l'identificateur (dont son nom), liste des paramètres, corps *)
   type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
+  type globale = Globale of Tds.info_ast * expression
 
   (* Structure d'un programme dans notre langage *)
-  type programme = Programme of fonction list * bloc
+  type programme = Programme of globale list * fonction list * bloc
 end
 
 (* ******************************* *)
@@ -217,7 +220,8 @@ module AstPlacement = struct
   (* informations associées à l'identificateur (dont son nom), liste de paramètres, corps, expression de retour *)
   (* Plus besoin de la liste des paramètres mais on la garde pour les tests du placements mémoire *)
   type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
+  type globale = Globale of Tds.info_ast * expression
 
   (* Structure d'un programme dans notre langage *)
-  type programme = Programme of fonction list * bloc * int
+  type programme = Programme of globale list * fonction list * bloc * int
 end
