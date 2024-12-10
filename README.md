@@ -8,13 +8,22 @@ TODO List:
 
 
 
-TESTS : 
+## TESTS : 
 
 - GESTION ID : 
-    - sans fonction :
-        - testUtilisation20 : bcp trop de chose ?
-    - avec fonction : 
-        - TODO
+    - [ ] Pointeurs:
+    - [x] Globales :
+        - testGlobales1 : déclaration de variables globales (avec et sans fonction)
+        - testGlobales2 : déclaration de variables globales avec mauvaise initialisation (avec et sans fonction)
+    - [x] StatiquesLocales :
+        - testStatiquesLocales1 : déclaration de variables statiques locales (avec fonction)
+        - testStatiquesLocales2 : déclaration de variables statiques locales avec mauvaise initialisation (avec fonction)
+    - [ ] Paramètres par défaut :
+
+<!-- - sans fonction :
+    - testUtilisation20 : bcp trop de chose ?
+- avec fonction : 
+    - TODO -->
 
 
 - TYPE : 

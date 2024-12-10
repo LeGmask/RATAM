@@ -1,0 +1,12 @@
+int cpt (int x){
+  cpt_val = (cpt_val + x);
+  return cpt_val;
+}
+
+test{
+  static int cpt_val = 0;
+
+  print cpt(1);
+  print cpt(2);
+  print cpt(3);
+}
