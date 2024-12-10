@@ -12,6 +12,14 @@ TODO List:
 
 - GESTION ID : 
     - [ ] Pointeurs:
+        - testUtilisation20 : tout
+        - testDerefLecture1 : dereference identifiant non déclaré 
+        - testDerefLecture2 : dereference identifiant déclaré 
+        - testDerefEcriture1 : deref id non-déclaré
+        - testDerefEcriture2 : deref id déclaré
+        - testReference1 : reference id déclaré
+        - testReference2 : reference id non-déclaré
+        
     - [x] Globales :
         - testGlobales1 : déclaration de variables globales (avec et sans fonction)
         - testGlobales2 : déclaration de variables globales avec mauvaise initialisation (avec et sans fonction)
@@ -20,7 +28,12 @@ TODO List:
         - testStatiquesLocales1 : déclaration de variables statiques locales (avec fonction)
         - testStatiquesLocales2 : déclaration de variables statiques locales avec mauvaise initialisation (avec fonction)
         - testStatiquesLocales3 : doubles déclaration (avec fonction)
-    - [ ] Paramètres par défaut :
+    - [x] Paramètres par défaut :
+        - testDefaut1 : ordre incorrect (valeur par défaut devant paramètre sans valeur par défaut)
+        - testDefaut2 : valeur par défaut avec identifiants non-défini
+        - testDefaut3 : valeur par défaut avec identifiant cyclique (ie le paramètre lui même)
+        - testDefaut4 : valeur par défaut correct sur rat
+        - testDefaut5 : valeurs par défaut multiples après variables sans (2 sans -> 2 avec)
 
 <!-- - sans fonction :
     - testUtilisation20 : bcp trop de chose ?

@@ -189,12 +189,6 @@ let%test_unit "testDeref1" =
     raise ErreurNonDetectee
   with IdentifiantNonDeclare "y" -> ()
 
-let%test_unit "testDefaut1" =
-  try
-    let _ = compiler (pathFichiersRat ^ "testDefaut1.rat") in
-    raise ErreurNonDetectee
-  with ValeurParametresDefautsDesordonnees "f" -> ()
-
 let%test_unit "testStatiqueLocale1" =
   let _ = compiler (pathFichiersRat ^ "testStatiqueLocale1.rat") in
   ()
@@ -226,6 +220,32 @@ let%test_unit "testGlobales3" =
     let _ = compiler (pathFichiersRat ^ "testGlobales3.rat") in
     raise ErreurNonDetectee
   with DoubleDeclaration "cpt_val" -> ()
+  
+let%test_unit "testDefaut1" =
+try
+  let _ = compiler (pathFichiersRat ^ "testDefaut1.rat") in
+  raise ErreurNonDetectee
+with ValeurParametresDefautsDesordonnees "f" -> ()
+
+let%test_unit "testDefaut2" =
+try
+  let _ = compiler (pathFichiersRat ^ "testDefaut2.rat") in
+  raise ErreurNonDetectee
+with IdentifiantNonDeclare "x" -> ()
+
+let%test_unit "testDefaut3" =
+try
+  let _ = compiler (pathFichiersRat ^ "testDefaut3.rat") in
+  raise ErreurNonDetectee
+with IdentifiantNonDeclare "a" -> ()
+
+let%test_unit "testDefaut4" =
+  let _ = compiler (pathFichiersRat ^ "testDefaut4.rat") in
+  ()
+
+let%test_unit "testDefaut5" =
+let _ = compiler (pathFichiersRat ^ "testDefaut5.rat") in
+()
 
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix

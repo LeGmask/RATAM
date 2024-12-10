@@ -1,0 +1,6 @@
+int f (int a = x){
+  return a;
+}
+
+test{
+}

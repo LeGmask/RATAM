@@ -1,0 +1,6 @@
+rat f (rat a = [3/4]){
+  return a;
+}
+
+test{
+}
