@@ -12,26 +12,36 @@ type t2 = Ast.AstPlacement.programme
 (* Paramètre depl : le déplacement par rapport au début du registre *)
 (* Paramètre reg : le registre *)
 (* Détermine la taille d'une instruction et la transforme en une AstPlacement.instruction *)
-let rec analyse_placement_instruction i depl reg =
+let rec analyse_placement_instruction i depl reg d =
   match i with
   | AstType.Declaration (info, e) -> (
       match !info with
       | InfoVar (_, typ, _, _) ->
           let taille = getTaille typ in
           modifier_adresse_variable depl reg info;
-          (AstPlacement.Declaration (info, e), taille)
-      | _ -> failwith "erreur interne")
-  | AstType.Affectation (info, e) -> (AstPlacement.Affectation (info, e), 0)
-  | AstType.AffichageInt e -> (AstPlacement.AffichageInt e, 0)
-  | AstType.AffichageRat e -> (AstPlacement.AffichageRat e, 0)
-  | AstType.AffichageBool e -> (AstPlacement.AffichageBool e, 0)
+          (AstPlacement.Declaration (info, e), taille, 0)
+      | _ ->
+          failwith "erreur interne: analyse_placement_instruction@Declaration")
+  | AstType.StatiqueLocale (info, e) -> (
+      match !info with
+      | InfoVar (_, typ, _, _) ->
+          let taille = getTaille typ in
+          modifier_adresse_variable d "SB" info;
+          (AstPlacement.StatiqueLocale (info, e), 0, taille + getTaille Bool)
+      | _ ->
+          failwith
+            "erreur interne: analyse_placement_instruction@StatiqueLocale")
+  | AstType.Affectation (aff, e) -> (AstPlacement.Affectation (aff, e), 0, 0)
+  | AstType.AffichageInt e -> (AstPlacement.AffichageInt e, 0, 0)
+  | AstType.AffichageRat e -> (AstPlacement.AffichageRat e, 0, 0)
+  | AstType.AffichageBool e -> (AstPlacement.AffichageBool e, 0, 0)
   | AstType.Conditionnelle (c, t, e) ->
-      let nbt = analyse_placement_bloc t depl reg in
-      let nbe = analyse_placement_bloc e depl reg in
-      (AstPlacement.Conditionnelle (c, nbt, nbe), 0)
+      let nbt, delta = analyse_placement_bloc t depl reg d in
+      let nbe, delta = analyse_placement_bloc e depl reg (d + delta) in
+      (AstPlacement.Conditionnelle (c, nbt, nbe), 0, delta)
   | AstType.TantQue (c, b) ->
-      let nb = analyse_placement_bloc b depl reg in
-      (AstPlacement.TantQue (c, nb), 0)
+      let nb, delta = analyse_placement_bloc b depl reg d in
+      (AstPlacement.TantQue (c, nb), 0, delta)
   | AstType.Retour (e, ia) -> (
       match !ia with
       | InfoFun (_, typret, argstyp) ->
@@ -39,9 +49,9 @@ let rec analyse_placement_instruction i depl reg =
           let tp =
             List.fold_right (fun typ acc -> acc + getTaille typ) argstyp 0
           in
-          (AstPlacement.Retour (e, tr, tp), 0)
-      | _ -> failwith "erreur interne")
-  | AstType.Empty -> (AstPlacement.Empty, 0)
+          (AstPlacement.Retour (e, tr, tp), 0, 0)
+      | _ -> failwith "erreur interne: analyse_placement_instruction@Retour")
+  | AstType.Empty -> (AstPlacement.Empty, 0, 0)
 
 (* analyse_placement_bloc : AstType.bloc -> AstPlacement.bloc *)
 (* Paramètre li : liste d'instructions à analyser *)
@@ -49,26 +59,26 @@ let rec analyse_placement_instruction i depl reg =
 (* Paramètre reg : le registre mémoire *)
 (* Détermine la taille mémoire du bloc et
    le transforme en un AstPlacement.bloc *)
-and analyse_placement_bloc li depml reg =
+and analyse_placement_bloc li depml reg d =
   match li with
-  | [] -> ([], 0)
+  | [] -> (([], 0), d)
   | i :: q ->
-      let ni, ti = analyse_placement_instruction i depml reg in
-      let nli, tb = analyse_placement_bloc q (depml + ti) reg in
-      (ni :: nli, ti + tb)
+      let ni, ti, di = analyse_placement_instruction i depml reg d in
+      let (nli, tb), db = analyse_placement_bloc q (depml + ti) reg (d + di) in
+      ((ni :: nli, ti + tb), di + db)
 
 (* analyse_placement_fonction : AstType.fonction -> AstPlacement.fonction *)
 (* Paramètre : la fonction à analyser *)
 (* Place en mémoire les paramètres d'une fonction et
    la transforme en une AstPlacement.fonction *)
-let analyse_placement_fonction (AstType.Fonction (info, lp, li)) =
+let analyse_placement_fonction (AstType.Fonction (info, lp, li)) d =
   (* get_taille_param : Tds.info_ast -> int*)
   (* Paramètre p  infos_ast *)
   (* Retourne la taille d'un paramètre de Fonction *)
   let get_taille_param p =
     match !p with
     | InfoVar (_, typ, _, _) -> getTaille typ
-    | _ -> failwith "erreur interne"
+    | _ -> failwith "erreur interne: analyse_placement_fonction"
     (* analyse des paramètres *)
   in
 
@@ -83,15 +93,38 @@ let analyse_placement_fonction (AstType.Fonction (info, lp, li)) =
         curDep
   in
   ignore (process_params lp);
-  let nb = analyse_placement_bloc li 3 "LB" in
-  AstPlacement.Fonction (info, lp, nb)
+  let nb, delta = analyse_placement_bloc li 3 "LB" d in
+  (AstPlacement.Fonction (info, lp, nb), delta)
+
+let analyse_placement_globale (AstType.Globale (info, exp)) depl =
+  match !info with
+  | InfoVar (_, typ, _, _) ->
+      let taille = getTaille typ in
+      modifier_adresse_variable depl "SB" info;
+      (AstPlacement.Globale (info, exp), taille)
+  | _ -> failwith "erreur interne : analyse_placement_globale pas InfoVar"
 
 (* analyser : AstType.programme -> AstPlacement.programme *)
 (* Paramètre : le programme à analyser *)
 (* Effectue le placement mémoire et transforme le programme
    en un programme de type AstPlacement.programme *)
 (* Erreur si bug dans passes précédantes *)
-let analyser (AstType.Programme (fonctions, prog)) =
-  let nfs = List.map analyse_placement_fonction fonctions in
-  let np = analyse_placement_bloc prog 0 "SB" in
-  AstPlacement.Programme (nfs, np)
+let analyser (AstType.Programme (globales, fonctions, prog)) =
+  let offset, ng =
+    List.fold_left_map
+      (fun depl g ->
+        let ng, delta = analyse_placement_globale g depl in
+        (depl + delta, ng))
+      0 globales
+  in
+  let delta, nfs =
+    List.fold_left_map
+      (fun d fonction ->
+        let nf, delta = analyse_placement_fonction fonction d in
+        (d + delta, nf))
+      offset fonctions
+  in
+  (* 0 car normalement il n'y a pas de déclaration de variable statique locales en dehors des fonctions 
+  ce qui a déjà été vérifié lors de la phase de gestion_id *)
+  let np, _ = analyse_placement_bloc prog delta "SB" 0 in
+  AstPlacement.Programme (ng, nfs, np, delta)

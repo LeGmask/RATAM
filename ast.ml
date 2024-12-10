@@ -4,6 +4,8 @@ open Type
 module type Ast = sig
   type expression
   type instruction
+  type globale
+  type affectable
   type fonction
   type programme
 end
@@ -18,12 +20,15 @@ module AstSyntax = struct
   (* Opérateurs binaires de Rat *)
   type binaire = Fraction | Plus | Mult | Equ | Inf
 
+  (* Affectables de Rat Etendu *)
+  type affectable = Ident of string | Dereference of affectable
+
   (* Expressions de Rat *)
   type expression =
     (* Appel de fonction représenté par le nom de la fonction et la liste des paramètres réels *)
     | AppelFonction of string * expression list
     (* Accès à un identifiant représenté par son nom *)
-    | Ident of string
+    | Affectable of affectable
     (* Booléen *)
     | Booleen of bool
     (* Entier *)
@@ -32,6 +37,12 @@ module AstSyntax = struct
     | Unaire of unaire * expression
     (* Opération binaire représentée par l'opérateur, l'opérande gauche et l'opérande droite *)
     | Binaire of binaire * expression * expression
+    (* Pointeur nul *)
+    | PointeurNul
+    (* Allocation d'un nouvel objet *)
+    | Nouveau of typ
+    (* Adresse mémoire *)
+    | Adresse of string
 
   (* Instructions de Rat *)
   type bloc = instruction list
@@ -39,8 +50,10 @@ module AstSyntax = struct
   and instruction =
     (* Déclaration de variable représentée par son type, son nom et l'expression d'initialisation *)
     | Declaration of typ * string * expression
+    (* Déclaration d'une variable statique locale *)
+    | StatiqueLocale of typ * string * expression
     (* Affectation d'une variable représentée par son nom et la nouvelle valeur affectée *)
-    | Affectation of string * expression
+    | Affectation of affectable * expression
     (* Déclaration d'une constante représentée par son nom et sa valeur (entier) *)
     | Constante of string * int
     (* Affichage d'une expression *)
@@ -52,30 +65,42 @@ module AstSyntax = struct
     (* return d'une fonction *)
     | Retour of expression
 
+  (* Structure d'une variable globale *)
+  (* type - nom - expression *)
+  type globale = Globale of typ * string * expression
+
   (* Structure des fonctions de Rat *)
-  (* type de retour - nom - liste des paramètres (association type et nom) - corps de la fonction *)
-  type fonction = Fonction of typ * string * (typ * string) list * bloc
+  (* type de retour - nom -
+     liste des paramètres (association type , nom, et une option d'expression par défaut)
+     - corps de la fonction *)
+  type fonction =
+    | Fonction of typ * string * (typ * string * expression option) list * bloc
 
   (* Structure d'un programme Rat *)
   (* liste de fonction - programme principal *)
-  type programme = Programme of fonction list * bloc
+  type programme = Programme of globale list * fonction list * bloc
 end
 
 (* ********************************************* *)
 (* AST après la phase d'analyse des identifiants *)
 (* ********************************************* *)
 module AstTds = struct
+  (* Affectables de Rat Etendu *)
+  type affectable = Ident of Tds.info_ast | Dereference of affectable
+
   (* Expressions existantes dans notre langage *)
   (* ~ expression de l'AST syntaxique où les noms des identifiants ont été
      remplacés par les informations associées aux identificateurs *)
   type expression =
     | AppelFonction of Tds.info_ast * expression list
-    | Ident of Tds.info_ast
-      (* le nom de l'identifiant est remplacé par ses informations *)
+    | Affectable of affectable
     | Booleen of bool
     | Entier of int
     | Unaire of AstSyntax.unaire * expression
     | Binaire of AstSyntax.binaire * expression * expression
+    | PointeurNul
+    | Nouveau of typ
+    | Adresse of Tds.info_ast
 
   (* instructions existantes dans notre langage *)
   (* ~ instruction de l'AST syntaxique où les noms des identifiants ont été
@@ -86,7 +111,8 @@ module AstTds = struct
   and instruction =
     | Declaration of typ * Tds.info_ast * expression
       (* le nom de l'identifiant est remplacé par ses informations *)
-    | Affectation of Tds.info_ast * expression
+    | StatiqueLocale of typ * Tds.info_ast * expression
+    | Affectation of affectable * expression
       (* le nom de l'identifiant est remplacé par ses informations *)
     | Affichage of expression
     | Conditionnelle of expression * bloc * bloc
@@ -100,14 +126,19 @@ module AstTds = struct
   type fonction =
     | Fonction of typ * Tds.info_ast * (typ * Tds.info_ast) list * bloc
 
+  type globale = Globale of typ * Tds.info_ast * expression
+
   (* Structure d'un programme dans notre langage *)
-  type programme = Programme of fonction list * bloc
+  type programme = Programme of globale list * fonction list * bloc
 end
 
 (* ******************************* *)
 (* AST après la phase de typage *)
 (* ******************************* *)
 module AstType = struct
+  (* Affectables de Rat Etendu *)
+  type affectable = Ident of Tds.info_ast | Dereference of affectable
+
   (* Opérateurs unaires de Rat - résolution de la surcharge *)
   type unaire = Numerateur | Denominateur
 
@@ -126,11 +157,14 @@ module AstType = struct
   (* = expression de AstTds *)
   type expression =
     | AppelFonction of Tds.info_ast * expression list
-    | Ident of Tds.info_ast
+    | Affectable of affectable
     | Booleen of bool
     | Entier of int
     | Unaire of unaire * expression
     | Binaire of binaire * expression * expression
+    | PointeurNul
+    | Nouveau of typ
+    | Adresse of Tds.info_ast
 
   (* instructions existantes Rat *)
   (* = instruction de AstTds + informations associées aux identificateurs, mises à jour *)
@@ -139,7 +173,8 @@ module AstType = struct
 
   and instruction =
     | Declaration of Tds.info_ast * expression
-    | Affectation of Tds.info_ast * expression
+    | StatiqueLocale of Tds.info_ast * expression
+    | Affectation of affectable * expression
     | AffichageInt of expression
     | AffichageRat of expression
     | AffichageBool of expression
@@ -150,15 +185,18 @@ module AstType = struct
 
   (* informations associées à l'identificateur (dont son nom), liste des paramètres, corps *)
   type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
+  type globale = Globale of Tds.info_ast * expression
 
   (* Structure d'un programme dans notre langage *)
-  type programme = Programme of fonction list * bloc
+  type programme = Programme of globale list * fonction list * bloc
 end
 
 (* ******************************* *)
 (* AST après la phase de placement *)
 (* ******************************* *)
 module AstPlacement = struct
+  type affectable = AstType.affectable
+
   (* Expressions existantes dans notre langage *)
   (* = expression de AstType  *)
   type expression = AstType.expression
@@ -168,7 +206,8 @@ module AstPlacement = struct
 
   and instruction =
     | Declaration of Tds.info_ast * expression
-    | Affectation of Tds.info_ast * expression
+    | StatiqueLocale of Tds.info_ast * expression
+    | Affectation of affectable * expression
     | AffichageInt of expression
     | AffichageRat of expression
     | AffichageBool of expression
@@ -181,7 +220,8 @@ module AstPlacement = struct
   (* informations associées à l'identificateur (dont son nom), liste de paramètres, corps, expression de retour *)
   (* Plus besoin de la liste des paramètres mais on la garde pour les tests du placements mémoire *)
   type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
+  type globale = Globale of Tds.info_ast * expression
 
   (* Structure d'un programme dans notre langage *)
-  type programme = Programme of fonction list * bloc
+  type programme = Programme of globale list * fonction list * bloc * int
 end

@@ -56,6 +56,18 @@ let%expect_test "testfun6" =
   runtam (pathFichiersRat ^ "testfun6.rat");
   [%expect {|truetrue|}]
 
+let%expect_test "testfun8" =
+  runtam (pathFichiersRat ^ "testfun8.rat");
+  [%expect {| 15 |}]
+
+let%expect_test "testfun9" =
+  runtam (pathFichiersRat ^ "testfun9.rat");
+  [%expect {| 1234 |}]
+
+let%expect_test "testfun10" =
+  runtam (pathFichiersRat ^ "testfun10.rat");
+  [%expect {| 5116 |}]
+
 let%expect_test "testfuns" =
   runtam (pathFichiersRat ^ "testfuns.rat");
   [%expect {| 28 |}]
