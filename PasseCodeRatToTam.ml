@@ -76,7 +76,17 @@ let rec analyse_code_instruction (i : AstPlacement.instruction) =
           let ec = analyse_code_expression exp in
           let s = getTaille typ in
           push s ^ ec ^ store s d reg
-      | _ -> failwith "erreur interne 14")
+      | _ -> failwith "erreur interne: analyse_code_instruction@Declaration")
+  | StatiqueLocale (info, exp) -> (
+      match !info with
+      | InfoVar (_, typ, d, reg) ->
+          let ec = analyse_code_expression exp in
+          let s = getTaille typ + getTaille Bool in
+          let defined = getEtiquette () in
+          loada d reg
+          ^ loadi (getTaille typ + getTaille Bool)
+          ^ jumpif 1 defined ^ ec ^ loadl_int 1 ^ store s d reg ^ label defined
+      | _ -> failwith "erreur interne: analyse_code_instruction@StatiqueLocale")
   | Affectation (aff, exp) ->
       let ec = analyse_code_expression exp in
       let ca = analyse_code_affectable_ecriture aff "" in
@@ -121,11 +131,14 @@ let analyse_code_fonction (AstPlacement.Fonction (info, _, bloc)) =
   | InfoFun (nom, _, _) -> (label nom ^ analyse_code_bloc bloc) ^ halt
   | _ -> failwith "erreur interne 15"
 
-let analyser (AstPlacement.Programme (fonctions, prog)) =
+let analyser (AstPlacement.Programme (fonctions, prog, statique_delta)) =
   let funsStr =
     List.fold_left
       (fun acc f -> acc ^ " " ^ analyse_code_fonction f)
       "" fonctions
   in
   let blocStr = analyse_code_bloc prog in
-  getEntete () ^ funsStr ^ "main\n" ^ blocStr ^ halt
+  getEntete () ^ funsStr ^ label "main"
+  (* On init les variables statiques avec des 0 *)
+  ^ push statique_delta
+  ^ blocStr ^ halt

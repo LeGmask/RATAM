@@ -103,6 +103,20 @@ let rec analyse_type_instruction i =
       let ne, netyp = analyse_type_expression e in
       if est_compatible natyp netyp then AstType.Affectation (na, ne)
       else raise (TypeInattendu (netyp, natyp))
+  | AstTds.StatiqueLocale (t, info, e) -> (
+      (* traitement de l'expression *)
+      let ne, netyp = analyse_type_expression e in
+      if not (est_compatible t netyp) then
+        (* Les types sont incompatibles *)
+        raise (TypeInattendu (netyp, t))
+      else
+        (* les types sont compatibles *)
+        (* ajout de l'information de type dans l'info_ast *)
+        match !info with
+        | InfoVar _ ->
+            modifier_type_variable t info;
+            AstType.StatiqueLocale (info, ne)
+        | _ -> failwith "erreur interne typage StatiqueLocal")
   | AstTds.Affichage e -> (
       let ne, netyp = analyse_type_expression e in
       match netyp with

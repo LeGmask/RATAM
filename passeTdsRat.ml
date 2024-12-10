@@ -153,20 +153,18 @@ let rec analyse_tds_instruction tds tdd oia i =
       (* On récupère l'information associée à la fonction dans laquelle on déclare *)
       match oia with
       (* Il n'y a pas d'information -> l'instruction est hors d'une fonction : erreur *)
-      | None ->
-          raise (VariableLocaleStatiqueHorsFonction n)
-          (* Il y a une information -> l'instruction est dans une fonction *)
+      | None -> raise (VariableLocaleStatiqueHorsFonction n)
+      (* Il y a une information -> l'instruction est dans une fonction *)
       | Some ia ->
           (* Analyse de l'expression *)
           let ne = analyse_tds_expression tds tdd e in
           (* Création de l'information associée à l'identfiant *)
           let info = InfoVar (n, Undefined, 0, "") in
           (* Création du pointeur sur l'information *)
-          let ia = ref info in
+          let info_ast = ref info in
           (* Ajout de l'information (pointeur) dans la tds *)
-          ajouter tds n ia;
-          failwith "TODO : AstTds.StatiqueLocale"
-          (*AstTds.StatiqueLocale (ne, ia)*))
+          ajouter tds n info_ast;
+          AstTds.StatiqueLocale (t, info_ast, ne))
   | AstSyntax.Affectation (a, e) ->
       let na = analyse_tds_affectable tds a true in
       let ne = analyse_tds_expression tds tdd e in

@@ -111,6 +111,7 @@ module AstTds = struct
   and instruction =
     | Declaration of typ * Tds.info_ast * expression
       (* le nom de l'identifiant est remplacé par ses informations *)
+    | StatiqueLocale of typ * Tds.info_ast * expression
     | Affectation of affectable * expression
       (* le nom de l'identifiant est remplacé par ses informations *)
     | Affichage of expression
@@ -170,6 +171,7 @@ module AstType = struct
 
   and instruction =
     | Declaration of Tds.info_ast * expression
+    | StatiqueLocale of Tds.info_ast * expression
     | Affectation of affectable * expression
     | AffichageInt of expression
     | AffichageRat of expression
@@ -201,6 +203,7 @@ module AstPlacement = struct
 
   and instruction =
     | Declaration of Tds.info_ast * expression
+    | StatiqueLocale of Tds.info_ast * expression
     | Affectation of affectable * expression
     | AffichageInt of expression
     | AffichageRat of expression
@@ -216,5 +219,5 @@ module AstPlacement = struct
   type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
 
   (* Structure d'un programme dans notre langage *)
-  type programme = Programme of fonction list * bloc
+  type programme = Programme of fonction list * bloc * int
 end
