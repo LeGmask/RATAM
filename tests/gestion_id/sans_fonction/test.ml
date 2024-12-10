@@ -35,6 +35,12 @@ let%test_unit "testAffectation4" =
     raise ErreurNonDetectee
   with MauvaiseUtilisationIdentifiant "x" -> ()
 
+let%test_unit "testAffectation5" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testAffectation5.rat") in
+    raise ErreurNonDetectee
+  with IdentifiantNonDeclare "y" -> ()
+
 let%test_unit "testUtilisation1" =
   let _ = compiler (pathFichiersRat ^ "testUtilisation1.rat") in
   ()

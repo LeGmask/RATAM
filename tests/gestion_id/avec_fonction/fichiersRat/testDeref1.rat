@@ -1,0 +1,8 @@
+int f() {
+  int x = 0;
+  (*y) = 3;
+}
+
+test{
+  print f();
+}

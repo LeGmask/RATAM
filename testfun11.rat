@@ -1,0 +1,10 @@
+int** f (){
+  int * x = (new int);
+  (*x) = 5;
+  return &x;
+}
+
+test{
+  int** u = f();
+  print (*(*u));
+}

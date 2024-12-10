@@ -124,7 +124,7 @@ let analyser (AstType.Programme (globales, fonctions, prog)) =
         (d + delta, nf))
       offset fonctions
   in
-  (* 0 car normalement il n'y a pas de déclaration de variable statique locales en dehors des fonctions 
-  ce qui a déjà été vérifié lors de la phase de gestion_id *)
+  (* 0 car normalement il n'y a pas de déclaration de variable statique locales en dehors des fonctions
+     ce qui a déjà été vérifié lors de la phase de gestion_id *)
   let np, _ = analyse_placement_bloc prog delta "SB" 0 in
   AstPlacement.Programme (ng, nfs, np, delta)

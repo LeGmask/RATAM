@@ -1,0 +1,10 @@
+int f (int a=1, int b=10, int c=100){
+  return ((a+b)+c);
+}
+
+test{
+  print f();
+  print f(5); 
+  print f(1, 2);
+  print f(1,1,1);
+}
