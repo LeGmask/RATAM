@@ -19,6 +19,7 @@ TODO List:
     - [x] StatiquesLocales :
         - testStatiquesLocales1 : déclaration de variables statiques locales (avec fonction)
         - testStatiquesLocales2 : déclaration de variables statiques locales avec mauvaise initialisation (avec fonction)
+        - testStatiquesLocales3 : doubles déclaration (avec fonction)
     - [ ] Paramètres par défaut :
 
 <!-- - sans fonction :

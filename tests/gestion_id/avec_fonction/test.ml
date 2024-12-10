@@ -205,6 +205,12 @@ let%test_unit "testStatiqueLocale2" =
     raise ErreurNonDetectee
   with IdentifiantNonDeclare "cpt_val" -> ()
 
+let%test_unit "testStatiqueLocale3" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testStatiqueLocale3.rat") in
+    raise ErreurNonDetectee
+  with DoubleDeclaration "cpt_val" -> ()
+
 let%test_unit "testGlobales1" =
   let _ = compiler (pathFichiersRat ^ "testGlobales1.rat") in
   ()

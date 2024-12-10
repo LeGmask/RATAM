@@ -155,16 +155,26 @@ let rec analyse_tds_instruction tds tdd oia i =
       (* Il n'y a pas d'information -> l'instruction est hors d'une fonction : erreur *)
       | None -> raise (VariableLocaleStatiqueHorsFonction n)
       (* Il y a une information -> l'instruction est dans une fonction *)
-      | Some _ ->
-          (* Analyse de l'expression *)
-          let ne = analyse_tds_expression tds tdd e in
-          (* Création de l'information associée à l'identfiant *)
-          let info = InfoVar (n, Undefined, 0, "") in
-          (* Création du pointeur sur l'information *)
-          let info_ast = ref info in
-          (* Ajout de l'information (pointeur) dans la tds *)
-          ajouter tds n info_ast;
-          AstTds.StatiqueLocale (t, info_ast, ne))
+      | Some _ -> (
+          match chercherLocalement tds n with
+          | None ->
+              (* L'identifiant n'est pas trouvé dans la tds locale,
+                 il n'a donc pas été déclaré dans le bloc courant *)
+              (* Vérification de la bonne utilisation des identifiants dans l'expression *)
+              (* et obtention de l'expression transformée *)
+              let ne = analyse_tds_expression tds tdd e in
+              (* Création de l'information associée à l'identfiant *)
+              let info = InfoVar (n, Undefined, 0, "") in
+              (* Création du pointeur sur l'information *)
+              let info_ast = ref info in
+              (* Ajout de l'information (pointeur) dans la tds *)
+              ajouter tds n info_ast;
+              AstTds.StatiqueLocale (t, info_ast, ne)
+          | Some _ ->
+              (* L'identifiant est trouvé dans la tds locale,
+                 il a donc déjà été déclaré dans le bloc courant *)
+              raise (DoubleDeclaration n)))
+  (* Analyse de l'expression *)
   | AstSyntax.Affectation (a, e) ->
       let na = analyse_tds_affectable tds a true in
       let ne = analyse_tds_expression tds tdd e in
