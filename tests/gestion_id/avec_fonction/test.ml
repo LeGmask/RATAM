@@ -183,6 +183,18 @@ let%test_unit "testRetourFonction" =
     raise ErreurNonDetectee
   with RetourDansMain -> ()
 
+let%test_unit "testDeref1" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDeref1.rat") in
+    raise ErreurNonDetectee
+  with IdentifiantNonDeclare "y" -> ()
+
+let%test_unit "testDefaut1" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDefaut1.rat") in
+    raise ErreurNonDetectee
+  with ValeurParametresDefautsDesordonnees "f" -> ()
+
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix
 open Filename

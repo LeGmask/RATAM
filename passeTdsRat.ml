@@ -25,7 +25,7 @@ let rec analyse_tds_affectable tds a en_ecriture =
           match !ia with
           | InfoFun _ -> raise (MauvaiseUtilisationIdentifiant id)
           | InfoVar _ -> AstTds.Ident ia
-          | InfoConst (n, v) ->
+          | InfoConst _ ->
               if en_ecriture then raise (MauvaiseUtilisationIdentifiant id)
               else AstTds.Ident ia))
 
@@ -155,7 +155,7 @@ let rec analyse_tds_instruction tds tdd oia i =
       (* Il n'y a pas d'information -> l'instruction est hors d'une fonction : erreur *)
       | None -> raise (VariableLocaleStatiqueHorsFonction n)
       (* Il y a une information -> l'instruction est dans une fonction *)
-      | Some ia ->
+      | Some _ ->
           (* Analyse de l'expression *)
           let ne = analyse_tds_expression tds tdd e in
           (* Création de l'information associée à l'identfiant *)
@@ -263,7 +263,7 @@ let analyse_tds_fonction maintds tdd (AstSyntax.Fonction (t, n, lp, li)) =
         match el with
         | [] ->
             () (* si on a atteint la fin de la liste c'est que tout est bon *)
-        | Some e :: te ->
+        | Some _ :: te ->
             (* si on s'attendait à avoir une valeur par défaut et que c'est le cas, alors on continue *)
             (* ou alors on a une valeur par défaut alors qu'on ne s'y attendais pas; il s'agit de la première *)
             (* on s'attend donc à ce qu'il y en ait jusqu'à la fin de la liste *)
@@ -271,8 +271,7 @@ let analyse_tds_fonction maintds tdd (AstSyntax.Fonction (t, n, lp, li)) =
         | None :: te ->
             if excepted then
               (*si on s'attendais à avoir une valeur par défaut et qu'il n'y en a pas ERREUR *)
-              failwith
-                "TODO : add exceptions pour paramètre par défaut pas qu'en fin"
+              raise (ValeurParametresDefautsDesordonnees n)
             else
               (* on n'a pas encore trouvé de valeur par défaut, on continue *)
               check te excepted

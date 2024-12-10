@@ -109,3 +109,5 @@ let compilerVersFichier ratfile tamfile =
   let chan = open_out tamfile in
   output_string chan tamcode;
   close_out chan
+
+(* let () = compilerVersFichier "testfun11.rat" "out.tam" *)

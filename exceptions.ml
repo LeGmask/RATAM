@@ -24,3 +24,4 @@ exception DerefereceNonPointeur
 
 (* Affichage d'un type non supporté *)
 exception AffichageTypeNonSupporte
+exception ValeurParametresDefautsDesordonnees of string

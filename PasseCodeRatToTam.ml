@@ -129,7 +129,7 @@ and analyse_code_bloc (li, taille) =
 let analyse_code_fonction (AstPlacement.Fonction (info, _, bloc)) =
   match !info with
   | InfoFun (nom, _, _) -> (label nom ^ analyse_code_bloc bloc) ^ halt
-  | _ -> failwith "erreur interne 15"
+  | _ -> failwith "erreur interne : analyse_code_fonction pas InfoFun"
 
 let analyse_code_globale (AstPlacement.Globale (info, exp)) =
   analyse_code_instruction (AstPlacement.Declaration (info, exp))
