@@ -1,0 +1,7 @@
+static int x = 0;
+static int x = 2;
+
+test {
+  x = (x + 1);
+  print x;
+}

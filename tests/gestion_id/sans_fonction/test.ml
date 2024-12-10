@@ -137,6 +137,12 @@ let%test_unit "testGlobales2" =
     raise ErreurNonDetectee
   with VariableLocaleStatiqueHorsFonction "x" -> ()
 
+let%test_unit "testGlobales3" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testGlobales3.rat") in
+    raise ErreurNonDetectee
+  with DoubleDeclaration "x" -> ()
+
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix
 open Filename

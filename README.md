@@ -15,6 +15,7 @@ TODO List:
     - [x] Globales :
         - testGlobales1 : déclaration de variables globales (avec et sans fonction)
         - testGlobales2 : déclaration de variables globales avec mauvaise initialisation (avec et sans fonction)
+        - testGlobales3 : doubles déclaration (avec et sans fonction)
     - [x] StatiquesLocales :
         - testStatiquesLocales1 : déclaration de variables statiques locales (avec fonction)
         - testStatiquesLocales2 : déclaration de variables statiques locales avec mauvaise initialisation (avec fonction)
