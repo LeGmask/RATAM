@@ -62,6 +62,22 @@ let%test_unit "testDeclaration9" =
     raise ErreurNonDetectee
   with TypeInattendu (Rat, Bool) -> ()
 
+let%test_unit "testDeclaration10" =
+  let _ = compiler (pathFichiersRat ^ "testDeclaration10.rat") in
+  ()
+
+let%test_unit "testDeclaration11" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDeclaration11.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Bool, Int) -> ()
+
+let%test_unit "testDeclaration12" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDeclaration12.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Rat, Int) -> ()
+
 let%test_unit "testAffectation1" =
   let _ = compiler (pathFichiersRat ^ "testAffectation1.rat") in
   ()
@@ -131,6 +147,22 @@ let%test_unit "testAffectation12" =
 let%test_unit "testAffectation13" =
   let _ = compiler (pathFichiersRat ^ "testAffectation13.rat") in
   ()
+
+let%test_unit "testAffectation14" =
+  let _ = compiler (pathFichiersRat ^ "testAffectation14.rat") in
+  ()
+
+let%test_unit "testAffectation15" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testAffectation15.rat") in
+    ()
+  with TypeInattendu (Bool, Int) -> ()
+
+let%test_unit "testAffectation16" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testAffectation16.rat") in
+    ()
+  with TypeInattendu (Rat, Int) -> ()
 
 let%test_unit "testConditionnelle1" =
   let _ = compiler (pathFichiersRat ^ "testConditionnelle1.rat") in

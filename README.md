@@ -44,6 +44,13 @@ TODO List:
 - TYPE : 
     - [ ] Pointeurs:
     - [ ] Globales :
+        - testAffectation14 : affectation de variables globales (sans fonction)
+        - testAffectation15 : affectation de variables globales avec mauvais type (sans fonction)
+        - testAffectation15 : affectation de variables globales avec mauvais type (sans fonction)
+
+        - testDeclaration10 : déclaration de variables globales (sans fonction)
+        - testDeclaration11 : déclaration de variables globales avec mauvais type (sans fonction)
+        - testDeclaration12 : déclaration de variables globales avec mauvais type (sans fonction)
     - [ ] StatiquesLocales :
     - [ ] Paramètres par défaut :
 <!-- - Affectation du null : 

@@ -1,0 +1,4 @@
+static int x = 0;
+test{
+  x = 4;
+}
