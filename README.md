@@ -27,17 +27,29 @@ TODO List:
 
 
 - TYPE : 
-    - Affectation du null : 
-        - sur pointeur : TODO
-        - sur variables : testAffectation {10, 11, 12, 13}
-    - Opérateur Adresse de : TODO
-    - Fonctions : TODO
+    - [ ] Pointeurs:
+    - [ ] Globales :
+    - [ ] StatiquesLocales :
+    - [ ] Paramètres par défaut :
+<!-- - Affectation du null : 
+    - sur pointeur : TODO
+    - sur variables : testAffectation {10, 11, 12, 13}
+- Opérateur Adresse de : TODO
+- Fonctions : TODO -->
 
-- PLACEMENT : tout à faire
+- PLACEMENT :
+    - [ ] Pointeurs:
+    - [ ] Globales :
+    - [ ] StatiquesLocales :
+    - [ ] Paramètres par défaut :
 
 
 - TAM : 
-    - sans fonction : 
+    - [ ] Pointeurs:
+    - [ ] Globales :
+    - [ ] StatiquesLocales :
+    - [ ] Paramètres par défaut :
+    <!-- - sans fonction : 
         - testPointeur1 : allocation new, dereference écriture, déreférence lecture
         - testPointeur2 : déf pointeur en référence à une variable sur le stack
         - testPointeur3 : déréférence read/write chaînée
@@ -48,4 +60,4 @@ TODO List:
         - testfun10 : utilisation var globale dans fonction
         - testfun11 : test retour pointeur / addresse
         - testfun12 : 
-        - testfun13 : 
+        - testfun13 :  -->
