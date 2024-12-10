@@ -110,6 +110,28 @@ let%test_unit "testAffectation9" =
     raise ErreurNonDetectee
   with TypeInattendu (Int, Bool) -> ()
 
+let%test_unit "testAffectation10" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testAffectation10.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Pointeur Undefined, Bool) -> ()
+
+let%test_unit "testAffectation11" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testAffectation11.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Pointeur Undefined, Int) -> ()
+
+let%test_unit "testAffectation12" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testAffectation12.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Pointeur Undefined, Rat) -> ()
+
+let%test_unit "testAffectation13" =
+  let _ = compiler (pathFichiersRat ^ "testAffectation13.rat") in
+  ()
+
 let%test_unit "testConditionnelle1" =
   let _ = compiler (pathFichiersRat ^ "testConditionnelle1.rat") in
   ()
