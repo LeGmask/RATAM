@@ -1,0 +1,7 @@
+rat maFunc(bool f) {
+    int* x = &y;
+}
+
+test {
+    print 5;
+}

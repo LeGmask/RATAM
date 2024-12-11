@@ -220,32 +220,62 @@ let%test_unit "testGlobales3" =
     let _ = compiler (pathFichiersRat ^ "testGlobales3.rat") in
     raise ErreurNonDetectee
   with DoubleDeclaration "cpt_val" -> ()
-  
+
 let%test_unit "testDefaut1" =
-try
-  let _ = compiler (pathFichiersRat ^ "testDefaut1.rat") in
-  raise ErreurNonDetectee
-with ValeurParametresDefautsDesordonnees "f" -> ()
+  try
+    let _ = compiler (pathFichiersRat ^ "testDefaut1.rat") in
+    raise ErreurNonDetectee
+  with ValeurParametresDefautsDesordonnees "f" -> ()
 
 let%test_unit "testDefaut2" =
-try
-  let _ = compiler (pathFichiersRat ^ "testDefaut2.rat") in
-  raise ErreurNonDetectee
-with IdentifiantNonDeclare "x" -> ()
+  try
+    let _ = compiler (pathFichiersRat ^ "testDefaut2.rat") in
+    raise ErreurNonDetectee
+  with IdentifiantNonDeclare "x" -> ()
 
 let%test_unit "testDefaut3" =
-try
-  let _ = compiler (pathFichiersRat ^ "testDefaut3.rat") in
-  raise ErreurNonDetectee
-with IdentifiantNonDeclare "a" -> ()
+  try
+    let _ = compiler (pathFichiersRat ^ "testDefaut3.rat") in
+    raise ErreurNonDetectee
+  with IdentifiantNonDeclare "a" -> ()
 
 let%test_unit "testDefaut4" =
   let _ = compiler (pathFichiersRat ^ "testDefaut4.rat") in
   ()
 
 let%test_unit "testDefaut5" =
-let _ = compiler (pathFichiersRat ^ "testDefaut5.rat") in
-()
+  let _ = compiler (pathFichiersRat ^ "testDefaut5.rat") in
+  ()
+
+let%test_unit "testDerefLecture1" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDerefLecture1.rat") in
+    raise ErreurNonDetectee
+  with IdentifiantNonDeclare "y" -> ()
+
+let%test_unit "testDerefLecture2" =
+  let _ = compiler (pathFichiersRat ^ "testDerefLecture2.rat") in
+  ()
+
+let%test_unit "testDerefEcriture1" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDerefEcriture1.rat") in
+    raise ErreurNonDetectee
+  with IdentifiantNonDeclare "y" -> ()
+
+let%test_unit "testDerefEcriture2" =
+  let _ = compiler (pathFichiersRat ^ "testDerefEcriture2.rat") in
+  ()
+
+let%test_unit "testReference2" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testReference2.rat") in
+    raise ErreurNonDetectee
+  with IdentifiantNonDeclare "y" -> ()
+
+let%test_unit "testReference1" =
+  let _ = compiler (pathFichiersRat ^ "testReference1.rat") in
+  ()
 
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix

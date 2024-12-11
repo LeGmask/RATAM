@@ -142,7 +142,7 @@ let%test_unit "testGlobales3" =
     let _ = compiler (pathFichiersRat ^ "testGlobales3.rat") in
     raise ErreurNonDetectee
   with DoubleDeclaration "x" -> ()
-  
+
 let%test_unit "testDerefLecture1" =
   try
     let _ = compiler (pathFichiersRat ^ "testDerefLecture1.rat") in
@@ -154,24 +154,42 @@ let%test_unit "testDerefLecture2" =
   ()
 
 let%test_unit "testDerefEcriture1" =
-try
-  let _ = compiler (pathFichiersRat ^ "testDerefEcriture1.rat") in
-  raise ErreurNonDetectee
-with IdentifiantNonDeclare "y" -> ()
+  try
+    let _ = compiler (pathFichiersRat ^ "testDerefEcriture1.rat") in
+    raise ErreurNonDetectee
+  with IdentifiantNonDeclare "y" -> ()
 
 let%test_unit "testDerefEcriture2" =
   let _ = compiler (pathFichiersRat ^ "testDerefEcriture2.rat") in
   ()
 
 let%test_unit "testReference2" =
-try
-  let _ = compiler (pathFichiersRat ^ "testReference2.rat") in
-  raise ErreurNonDetectee
-with IdentifiantNonDeclare "y" -> ()
+  try
+    let _ = compiler (pathFichiersRat ^ "testReference2.rat") in
+    raise ErreurNonDetectee
+  with IdentifiantNonDeclare "y" -> ()
 
 let%test_unit "testReference1" =
   let _ = compiler (pathFichiersRat ^ "testReference1.rat") in
-()
+  ()
+
+let%test_unit "testDerefNonPointeur1" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDerefNonPointeur1.rat") in
+    raise ErreurNonDetectee
+  with DerefereceNonPointeur -> ()
+
+let%test_unit "testDerefNonPointeur2" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDerefNonPointeur2.rat") in
+    raise ErreurNonDetectee
+  with DerefereceNonPointeur -> ()
+
+let%test_unit "testDerefNonPointeur3" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDerefNonPointeur3.rat") in
+    raise ErreurNonDetectee
+  with DerefereceNonPointeur -> ()
 
 (* Fichiers de tests de la génération de code -> doivent passer la TDS *)
 open Unix

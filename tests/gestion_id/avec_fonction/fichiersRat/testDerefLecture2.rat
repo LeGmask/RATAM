@@ -1,0 +1,9 @@
+bool f(int* x) {
+    int y = (*x);
+    return true;
+}
+
+test {
+    int z = 6;
+    print f(&z);
+}

@@ -1,0 +1,7 @@
+int f(int* z) {
+    (*y) = 5;
+}
+
+test {
+    print f((new int));
+}

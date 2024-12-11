@@ -11,15 +11,17 @@ TODO List:
 ## TESTS : 
 
 - GESTION ID : 
-    - [ ] Pointeurs:
+    - [x] Pointeurs:
         - testUtilisation20 : tout
-        - testDerefLecture1 : dereference identifiant non déclaré 
-        - testDerefLecture2 : dereference identifiant déclaré 
+        - testDerefLecture1 : déréférence identifiant non déclaré 
+        - testDerefLecture2 : déréférence identifiant déclaré 
         - testDerefEcriture1 : deref id non-déclaré
         - testDerefEcriture2 : deref id déclaré
         - testReference1 : reference id déclaré
         - testReference2 : reference id non-déclaré
-        
+        - testDerefNonPointeur1 : déréférence de bool
+        - testDerefNonPointeur2 : déréférence d'int
+        - testDerefNonPointeur3 : déréférence de rat
     - [x] Globales :
         - testGlobales1 : déclaration de variables globales (avec et sans fonction)
         - testGlobales2 : déclaration de variables globales avec mauvaise initialisation (avec et sans fonction)
@@ -34,11 +36,6 @@ TODO List:
         - testDefaut3 : valeur par défaut avec identifiant cyclique (ie le paramètre lui même)
         - testDefaut4 : valeur par défaut correct sur rat
         - testDefaut5 : valeurs par défaut multiples après variables sans (2 sans -> 2 avec)
-
-<!-- - sans fonction :
-    - testUtilisation20 : bcp trop de chose ?
-- avec fonction : 
-    - TODO -->
 
 
 - TYPE : 
@@ -84,7 +81,7 @@ TODO List:
     - [ ] StatiquesLocales :
     - [ ] Paramètres par défaut :
     <!-- - sans fonction : 
-        - testPointeur1 : allocation new, dereference écriture, déreférence lecture
+        - testPointeur1 : allocation new, déréférence écriture, déreférence lecture
         - testPointeur2 : déf pointeur en référence à une variable sur le stack
         - testPointeur3 : déréférence read/write chaînée
 

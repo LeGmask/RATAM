@@ -1,0 +1,8 @@
+int maFunc(int a) {
+    int* x = &a;
+    return (*x);
+}
+
+test {
+    print maFunc(5);
+}

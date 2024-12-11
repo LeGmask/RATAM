@@ -1,0 +1,4 @@
+test {
+    int b = 56;
+    int b2 = (*b);
+}

@@ -1,0 +1,7 @@
+int fun(rat ui) {
+    int x = (*y);
+}
+
+test {
+    print 17;
+}

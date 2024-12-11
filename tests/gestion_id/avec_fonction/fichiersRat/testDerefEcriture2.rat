@@ -1,0 +1,9 @@
+int f(int* x) {
+    int y = (*x);
+    return y;
+}
+
+test {
+    int z = 7;
+    print f(&z);
+}
