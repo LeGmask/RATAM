@@ -1,0 +1,4 @@
+static bool x = true;
+test{
+  int y = x;
+}

@@ -1,0 +1,4 @@
+static rat x = [3/4];
+test{
+  int y = x;
+}

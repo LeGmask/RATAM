@@ -1,0 +1,8 @@
+static bool x = true;
+test{
+  if x {
+    int x = 3;
+  } else {
+    int x = 3;
+  }
+}

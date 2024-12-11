@@ -1,0 +1,6 @@
+static rat x = [3/4];
+test{
+  while x {
+    int x = 3;
+  } 
+}

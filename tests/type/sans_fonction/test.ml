@@ -196,6 +196,22 @@ let%test_unit "testConditionnelle6" =
     raise ErreurNonDetectee
   with TypeInattendu (Rat, Bool) -> ()
 
+let%test_unit "testConditionnelle7" =
+  let _ = compiler (pathFichiersRat ^ "testConditionnelle7.rat") in
+  ()
+
+let%test_unit "testConditionnelle8" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testConditionnelle8.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Int, Bool) -> ()
+
+let%test_unit "testConditionnelle9" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testConditionnelle9.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Rat, Bool) -> ()
+
 let%test_unit "testRepetition1" =
   let _ = compiler (pathFichiersRat ^ "testRepetition1.rat") in
   ()
@@ -227,6 +243,22 @@ let%test_unit "testRepetition6" =
     let _ = compiler (pathFichiersRat ^ "testRepetition6.rat") in
     raise ErreurNonDetectee
   with TypeInattendu (Rat, Bool) -> ()
+
+let%test_unit "testRepetition7" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testRepetition7.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Rat, Bool) -> ()
+
+let%test_unit "testRepetition8" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testRepetition8.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Int, Bool) -> ()
+
+let%test_unit "testRepetition9" =
+  let _ = compiler (pathFichiersRat ^ "testRepetition9.rat") in
+  ()
 
 let%test_unit "testPrint1" =
   let _ = compiler (pathFichiersRat ^ "testPrint1.rat") in
@@ -365,6 +397,22 @@ let%test_unit "testIdent9" =
     let _ = compiler (pathFichiersRat ^ "testIdent9.rat") in
     raise ErreurNonDetectee
   with TypeInattendu (Bool, Int) -> ()
+
+let%test_unit "testIdent10" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testIdent10.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Bool, Int) -> ()
+
+let%test_unit "testIdent11" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testIdent11.rat") in
+    raise ErreurNonDetectee
+  with TypeInattendu (Rat, Int) -> ()
+
+let%test_unit "testIdent12" =
+  let _ = compiler (pathFichiersRat ^ "testIdent12.rat") in
+  ()
 
 let%test_unit "testOperation1" =
   let _ = compiler (pathFichiersRat ^ "testOperation1.rat") in
