@@ -1,0 +1,12 @@
+int g (int r=6) {
+  return (2*r);
+}
+
+
+int f (int a=g()){
+  return a;
+}
+
+test{
+  print f();
+}

@@ -1,0 +1,11 @@
+int* copy(int* v) {
+  int* r = (new int);
+  (*r) = (*v);
+  return r;
+}
+
+main {
+  int y = 8;
+  int* c = copy(&y);
+  print (*c);
+}

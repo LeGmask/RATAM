@@ -1,0 +1,19 @@
+static int x = 5;
+
+int f() {
+  return x;
+}
+
+test{
+  print x;
+
+  int x = 6;
+  print x;
+
+  if true {
+    print f();
+    print x;
+  } else {
+    print 0;
+  }
+}

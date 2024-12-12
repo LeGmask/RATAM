@@ -96,19 +96,24 @@ TODO List:
 
 
 - TAM : 
-    - [ ] Pointeurs:
+    - [x] Pointeurs:
+        - testPointeur1 : allocation new, déréférence écriture, déreférence lecture (avec et sans fonction)
+        - testPointeur2 : référence à une variable de la pile (avec et sans fonction)
+        - testPointeur3 : référence à une variavle sur le tas, déréférence read/write chaînée (sans fonction uniquement)
+    
     - [ ] Globales :
-    - [ ] StatiquesLocales :
-    - [ ] Paramètres par défaut :
-    <!-- - sans fonction : 
-        - testPointeur1 : allocation new, déréférence écriture, déreférence lecture
-        - testPointeur2 : déf pointeur en référence à une variable sur le stack
-        - testPointeur3 : déréférence read/write chaînée
+         - testfun10 : utilisation var globale dans fonction
+         - testfun15 : masquage var globale
 
-    - avec fonction : 
-        - testfun8: expression par défaut
-        - testfun9: variable statique locale
-        - testfun10 : utilisation var globale dans fonction
-        - testfun11 : test retour pointeur / addresse
-        - testfun12 : 
-        - testfun13 :  -->
+    - [ ] StatiquesLocales :
+        - testfun9 : utilisation variable statique locale
+
+    - [x] Paramètres par défaut :
+        - testfun(8, 12) : valeur par défaut constante
+        - testfun13 : valeur par défaut globale
+        - testfun14 : valeur par défaut fonction
+
+## CHOIX:
+- Les valeurs par défauts sont traitées lors de la passe d'analyse syntaxique et sémantique. Lors de l'analyse des déclaration de fonction, une Table des Défauts (TDD) est remplie. Cette table fait l'association entre les identifians de fonctions déclarés et la liste des options d'expression. Lors de cette meme passe, lors du traitement des AppelFonction, la liste des expressions des paramètre lors de l'appel est complétée en conséquence. Ainsi, sont autorisés dans les expressions par défaut l'utilisation de tout les identifiants définis avant la définition de la fonction (fonctions déclaré avant et variables globales).(cf. testfun13 et testfun14 )
+
+- Les variables globales sont masquables.

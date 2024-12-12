@@ -1,0 +1,12 @@
+int* f() {
+  int* x = (new int);
+  (*x) = 5;
+  return x;
+}
+
+
+main {
+  int* y = f();
+  print (*y);
+}
+
