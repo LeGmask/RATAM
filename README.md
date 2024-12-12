@@ -44,16 +44,24 @@ TODO List:
         - testAppel15 : pointeur en paramètre de fonction mal typé
         - testRetourFonction5 : pointeur en retour de fonction (bien typé)
         - testRetourFonction6 : pointeur en retour de fonction (mal typé)
-
         - testAffectation(17-29) : affectation pointeur mal typé (int sur pointeur)
         - testAffectation(20-22) : affectation pointeur par référence (bien typé)
         - testAffectation23 : affectation pointeur par références chaînées (bien typé)
         - testAffectation(24-32) : affectation variable type de base par pointeur 
         - testAffectation(33-36) : affectation pointeur null
         - testAffectation(37-39) : affectation pointeur null sur variable type de base
-
         - testDerefE(1-3) : déréférencement pointeur en écriture
         - testDerefL(1-3) : déréférencement pointeur en lecture
+        - testIdent13 : utilisation identifiant bien typé
+        - testIdent(14, 15) : utilisation identifiant avec mauvais type
+        - testConditionnelle(10-13) : pointeur en condition
+        - testNumerateur(6, 7) : affectation pointeur + pointeur en opérande
+        - testDenominateur(6, 7) : affectation pointeur + pointeur en opérande
+        - testPrint4 : affichae pointeur
+        - testRationnel6 : pointeur dans déclaration rationnel
+        - testRepetition10 : pointeur en condition
+        - testDeclaration(13-30) : même chose que affectation mais à la déclaration
+
     - [x] Globales :
         - testAffectation14 : affectation de variables globales (sans fonction)
         - testAffectation15 : affectation de variables globales avec mauvais type (sans fonction)
@@ -75,12 +83,10 @@ TODO List:
         - testConditionnelle8
         - testConditionnelle9
     - [ ] StatiquesLocales :
-    - [ ] Paramètres par défaut :
-<!-- - Affectation du null : 
-    - sur pointeur : TODO
-    - sur variables : testAffectation {10, 11, 12, 13}
-- Opérateur Adresse de : TODO
-- Fonctions : TODO -->
+    - [x] Paramètres par défaut :
+        - testDefaut1 : valeur par défaut bien typé
+        - testDefaut2 : valeur par défaut mal typé 
+
 
 - PLACEMENT :
     - [ ] Pointeurs:

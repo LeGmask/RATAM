@@ -134,6 +134,16 @@ let%test_unit "test" =
   let _ = compiler (pathFichiersRat ^ "test.rat") in
   ()
 
+let%test_unit "testDefaut1" =
+  let _ = compiler (pathFichiersRat ^ "testDefaut1.rat") in
+  ()
+
+let%test_unit "testDefaut2" =
+  try
+    let _ = compiler (pathFichiersRat ^ "testDefaut2.rat") in
+    raise ErreurNonDetectee
+  with TypesParametresInattendus ([ Bool ], [ Int ]) -> ()
+
 let%test_unit "code_factrec" =
   let _ = compiler (pathFichiersRat ^ "factrec.rat") in
   ()
