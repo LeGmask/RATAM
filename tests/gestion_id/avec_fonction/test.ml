@@ -247,6 +247,14 @@ let%test_unit "testDefaut5" =
   let _ = compiler (pathFichiersRat ^ "testDefaut5.rat") in
   ()
 
+let%test_unit "testDefaut6" =
+  let _ = compiler (pathFichiersRat ^ "testDefaut6.rat") in
+  ()
+
+let%test_unit "testDefaut7" =
+  let _ = compiler (pathFichiersRat ^ "testDefaut7.rat") in
+  ()
+
 let%test_unit "testDerefLecture1" =
   try
     let _ = compiler (pathFichiersRat ^ "testDerefLecture1.rat") in

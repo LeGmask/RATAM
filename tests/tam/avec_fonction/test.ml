@@ -96,8 +96,7 @@ let%expect_test "testPointeur2" =
   runtam (pathFichiersRat ^ "testPointeur2.rat");
   [%expect {| 8 |}]
 
-
-  let%expect_test "testfuns" =
+let%expect_test "testfuns" =
   runtam (pathFichiersRat ^ "testfuns.rat");
   [%expect {| 28 |}]
 

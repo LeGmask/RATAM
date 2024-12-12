@@ -36,7 +36,8 @@ TODO List:
         - testDefaut3 : valeur par défaut avec identifiant cyclique (ie le paramètre lui même)
         - testDefaut4 : valeur par défaut correct sur rat
         - testDefaut5 : valeurs par défaut multiples après variables sans (2 sans -> 2 avec)
-
+        - testDefaut6 : valeur par défaut utilisant une variable globale
+        - testDefaut7 : valeur par défaut utilisant une fonction
 
 - TYPE : 
     - [x] Pointeurs:

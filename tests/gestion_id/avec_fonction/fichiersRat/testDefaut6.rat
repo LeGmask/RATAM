@@ -1,0 +1,9 @@
+static int g = 5;
+
+int f (int a=g){
+  return a;
+}
+
+test{
+  print f();
+}
