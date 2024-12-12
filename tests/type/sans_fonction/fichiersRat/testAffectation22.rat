@@ -1,0 +1,5 @@
+test{
+  rat * x = (new rat);
+  rat r = [4/5];
+  x = &r;
+}

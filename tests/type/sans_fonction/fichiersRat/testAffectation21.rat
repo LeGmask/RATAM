@@ -1,0 +1,5 @@
+test{
+  bool * x = (new bool);
+  bool b = false;
+  x = &b;
+}

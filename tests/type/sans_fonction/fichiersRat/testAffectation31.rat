@@ -1,0 +1,4 @@
+test{
+  rat x = [1/2];
+  x = (new bool);
+}

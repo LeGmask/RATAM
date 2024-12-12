@@ -1,0 +1,6 @@
+test{
+  int *x = null;
+  while x {
+    int x = 3;
+  } 
+}

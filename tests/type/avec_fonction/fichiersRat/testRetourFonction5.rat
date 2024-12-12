@@ -1,0 +1,10 @@
+int* alloc (int x){
+  int * z = (new int);
+  (*z) = x;
+  return z;
+}
+
+
+test{
+  int* i = alloc(5);
+}

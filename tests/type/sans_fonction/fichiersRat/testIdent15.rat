@@ -1,0 +1,4 @@
+test{
+  rat * x = (new rat);
+  int* y = x;
+}

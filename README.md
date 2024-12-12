@@ -39,7 +39,21 @@ TODO List:
 
 
 - TYPE : 
-    - [ ] Pointeurs:
+    - [x] Pointeurs:
+        - testAppel14 : pointeur en paramètre de fonction bien typé
+        - testAppel15 : pointeur en paramètre de fonction mal typé
+        - testRetourFonction5 : pointeur en retour de fonction (bien typé)
+        - testRetourFonction6 : pointeur en retour de fonction (mal typé)
+
+        - testAffectation(17-29) : affectation pointeur mal typé (int sur pointeur)
+        - testAffectation(20-22) : affectation pointeur par référence (bien typé)
+        - testAffectation23 : affectation pointeur par références chaînées (bien typé)
+        - testAffectation(24-32) : affectation variable type de base par pointeur 
+        - testAffectation(33-36) : affectation pointeur null
+        - testAffectation(37-39) : affectation pointeur null sur variable type de base
+
+        - testDerefE(1-3) : déréférencement pointeur en écriture
+        - testDerefL(1-3) : déréférencement pointeur en lecture
     - [x] Globales :
         - testAffectation14 : affectation de variables globales (sans fonction)
         - testAffectation15 : affectation de variables globales avec mauvais type (sans fonction)

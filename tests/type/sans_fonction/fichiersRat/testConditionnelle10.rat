@@ -1,0 +1,9 @@
+test{
+  int * a = (new int);
+
+  if a {
+    int x = 3;
+  } else {
+    int x = 3;
+  }
+}

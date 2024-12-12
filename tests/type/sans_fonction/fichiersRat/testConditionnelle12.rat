@@ -1,0 +1,9 @@
+test{
+  rat * a = (new rat);
+
+  if a {
+    int x = 3;
+  } else {
+    int x = 3;
+  }
+}

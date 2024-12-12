@@ -1,0 +1,10 @@
+bool set (int c, int* d){
+  
+  return true;
+}
+
+
+test{
+  int*  x = (new int);
+  bool res = set(3, x);
+}
