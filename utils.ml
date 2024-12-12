@@ -18,7 +18,11 @@ let map_couple proc elems =
       (a :: qa, b :: qb))
     elems ([], [])
 
-(* TODO *)
+(* mergeOptions : 'a list -> 'a option list -> 'a list *)
+(* Paramètre l1 : la liste des expressions explicites des paramètres *)
+(* Paramètre l2 : la liste des options d'expressions par défauts des paramètres *)
+(* Réalise la fusion entre les expressions explicitement fournies lors d'un appel de fonction
+   et la liste des options des expressions par défaut de la fonction *)
 let rec mergeOptions l1 l2 =
   match (l1, l2) with
   | e :: q1, _ :: q2 ->
@@ -30,6 +34,6 @@ let rec mergeOptions l1 l2 =
            q2 (* on utilise la valeur par défaut si pas de valeur explicite *)
   | [], None :: _ ->
       []
-      (* ce cas correspond à une erreur de programmation (pas assez de paramètre & pas de valeur par défaut)*)
+      (* ce cas correspond à une erreur de programmation (pas assez de paramètre & pas de valeur par défaut pour les paramètres manquants)*)
   | _, [] -> l1
-(* ce cas correspond à une erreur de programmation (plus de paramètre que la fonction demande )*)
+(* ce cas correspond à une erreur de programmation (plus de paramètre explicitements fournies que demandé)*)

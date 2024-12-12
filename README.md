@@ -1,9 +1,8 @@
 TODO List:
-- Test parser + lexer
-- Test type.ml
-- Support paramètres par défaut parser
-- Ajouter commentaire passe typage
-- Ajouter commentaire passe placement mémoire 
+- Commentaires passee typage
+- Commentaires passe placement mémoire
+- Commentaires passe génération de code 
+- Tests TDD
 
 
 
@@ -118,3 +117,7 @@ TODO List:
 - Les valeurs par défauts sont traitées lors de la passe d'analyse syntaxique et sémantique. Lors de l'analyse des déclaration de fonction, une Table des Défauts (TDD) est remplie. Cette table fait l'association entre les identifians de fonctions déclarés et la liste des options d'expression. Lors de cette meme passe, lors du traitement des AppelFonction, la liste des expressions des paramètre lors de l'appel est complétée en conséquence. Ainsi, sont autorisés dans les expressions par défaut l'utilisation de tout les identifiants définis avant la définition de la fonction (fonctions déclaré avant et variables globales).(cf. testfun13 et testfun14 )
 
 - Les variables globales sont masquables.
+
+- Les variables statiques locales sont stockées après les variables globales dans la pile. Elles sont chacune accompagnée d'un booléen (situé au dessus la variable, par exemple si r un rat et que @r = 3[SB] alors le booléen associé est en 5[SB]) indiquant si la variable a été initialisée ou pas. Lors de chaque appel, on vérifie lors de la déclaration de la variable si son initialisation a déjà été effectuée. L'expression initialement affectée à la variable statique locale peut contenir tout identfifiants définis au moment de la déclaration; cela inclut : les variables globales, les fonctions définies préalablement, les paramètres de la fonction et les variables locales déclarée avant dans le corps de la fonction.
+
+- Les pointeurs : TODO

@@ -9,30 +9,42 @@ open Tdd
 type t1 = Ast.AstSyntax.programme
 type t2 = Ast.AstTds.programme
 
-(* analyse_tds_affectable -> tds -> AstSyntax.affectable *)
+(* analyse_tds_affectable : tds -> AstSyntax.affectable -> bool -> AstTds.affectable *)
 (* Paramètre tds : la table des symboles courante *)
 (* Paramètre a : l'affectable à traiter *)
-(* TODO DOC *)
+(* Vérifie la bonne utilisation d'un affectable et transforme l'affectable en
+   un AstTds.affectable *)
+(* Erreur si mauvaise utilisation *)
 let rec analyse_tds_affectable tds a en_ecriture =
   match a with
   | AstSyntax.Dereference a ->
+      (* si l'affectable est une déréférence d'un autre affectable *)
       let na = analyse_tds_affectable tds a en_ecriture in
       AstTds.Dereference na
   | AstSyntax.Ident id -> (
+      (* si l'affectable est un identifiant alors on le cherche globalement *)
       match chercherGlobalement tds id with
+      (* si l'identifiant n'a pas été déclaré, lève une exception *)
       | None -> raise (IdentifiantNonDeclare id)
+      (* si l'identifiant existe *)
       | Some ia -> (
+          (* on vérifie si l'identifiant correspond bien à une variable ou une constante *)
           match !ia with
-          | InfoFun _ -> raise (MauvaiseUtilisationIdentifiant id)
+          | InfoFun _ ->
+              (* une fonction ne peut pas être un affectable *)
+              raise (MauvaiseUtilisationIdentifiant id)
           | InfoVar _ -> AstTds.Ident ia
           | InfoConst _ ->
-              if en_ecriture then raise (MauvaiseUtilisationIdentifiant id)
+              if en_ecriture then
+                (* on ne peut pas écrire dans une constante *)
+                raise (MauvaiseUtilisationIdentifiant id)
               else AstTds.Ident ia))
 
-(* analyse_tds_var : tds -> AstSyntax.var -> AstTds.var ?? *)
+(* analyse_tds_var : tds -> tdd ->  AstSyntax.globale -> AstTds.globale *)
 (* Paramètre tds : la table des symboles courante *)
 (* Paramètre v : la variable globale à analyser *)
-(* TODO DOC + commentaires *)
+(* Vérifie la bonne utilisation des identifians et transforme l'AstSyntax.globale en une AstTds.globale *)
+(* Erreur si mauvaise utilisation des identifiants *)
 let rec analyse_tds_globale tds tdd (AstSyntax.Globale (t, n, e)) =
   match chercherGlobalement tds n with
   | None ->
@@ -118,8 +130,9 @@ and analyse_tds_expression (tds : tds) (tdd : tdd) (e : AstSyntax.expression) :
           | InfoVar _ -> AstTds.Adresse info
           | _ -> raise (MauvaiseUtilisationIdentifiant n)))
 
-(* analyse_tds_instruction : tds -> info_ast option -> AstSyntax.instruction -> AstTds.instruction *)
+(* analyse_tds_instruction : tds -> tdd -> info_ast option -> AstSyntax.instruction -> AstTds.instruction *)
 (* Paramètre tds : la table des symboles courante *)
+(* Paramètre tdd : la table des défauts courante *)
 (* Paramètre oia : None si l'instruction i est dans le bloc principal,
                    Some ia où ia est l'information associée à la fonction dans laquelle est l'instruction i sinon *)
 (* Paramètre i : l'instruction à analyser *)
@@ -226,8 +239,9 @@ let rec analyse_tds_instruction tds tdd oia i =
           let ne = analyse_tds_expression tds tdd e in
           AstTds.Retour (ne, ia))
 
-(* analyse_tds_bloc : tds -> info_ast option -> AstSyntax.bloc -> AstTds.bloc *)
+(* analyse_tds_bloc : tds -> tdd -> info_ast option -> AstSyntax.bloc -> AstTds.bloc *)
 (* Paramètre tds : la table des symboles courante *)
+(* Paramètre tdd : la table des défauts courante *)
 (* Paramètre oia : None si le bloc li est dans le programme principal,
                    Some ia où ia est l'information associée à la fonction dans laquelle est le bloc li sinon *)
 (* Paramètre li : liste d'instructions à analyser *)
@@ -246,6 +260,7 @@ and analyse_tds_bloc tds tdd oia li =
 
 (* analyse_tds_fonction : tds -> AstSyntax.fonction -> AstTds.fonction *)
 (* Paramètre tds : la table des symboles courante *)
+(* Paramètre tdd : la table des défauts *)
 (* Paramètre : la fonction à analyser *)
 (* Vérifie la bonne utilisation des identifiants et tranforme la fonction
    en une fonction de type AstTds.fonction *)
@@ -265,10 +280,11 @@ let analyse_tds_fonction maintds tdd (AstSyntax.Fonction (t, n, lp, li)) =
       (* On extrait les valeurs par défaut *)
       let defOpts = List.map (fun (_, _, e) -> e) lp in
 
-      (* Fonction auxiliaire pour vérifier que la liste des expressions par défaut est bien formée *)
       (* check : expression option list -> bool -> bool *)
       (* Paramètre : el : liste d'option d'expressions *)
       (* Paramètre excepted : booléen indique si on s'attend à avoir une expression par défaut *)
+      (* Fonction auxiliaire pour vérifier que la liste des expressions par défaut est bien formée *)
+      (* Erreur si liste mal formée *)
       let rec check el excepted =
         match el with
         | [] ->

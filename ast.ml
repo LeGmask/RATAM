@@ -126,6 +126,7 @@ module AstTds = struct
   type fonction =
     | Fonction of typ * Tds.info_ast * (typ * Tds.info_ast) list * bloc
 
+  (* Structure des variables globales *)
   type globale = Globale of typ * Tds.info_ast * expression
 
   (* Structure d'un programme dans notre langage *)
@@ -185,6 +186,8 @@ module AstType = struct
 
   (* informations associées à l'identificateur (dont son nom), liste des paramètres, corps *)
   type fonction = Fonction of Tds.info_ast * Tds.info_ast list * bloc
+
+  (* informations associées à une variable globale *)
   type globale = Globale of Tds.info_ast * expression
 
   (* Structure d'un programme dans notre langage *)

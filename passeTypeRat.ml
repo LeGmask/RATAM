@@ -1,4 +1,4 @@
-(* Module de la passe de gestion des identifiants *)
+(* Module de la passe de typage *)
 (* doit être conforme à l'interface Passe *)
 open Tds
 open Exceptions
@@ -11,20 +11,24 @@ type t2 = Ast.AstType.programme
 
 (* analyse_type_affectable -> AstTds.affectable -> ( AstType.affectable * typ) *)
 (* Paramètre a : l'affectable *)
-(* TODO DOC *)
+(* Evalue le type d'un AstTds.Affectable et le transforme en un AstType.affectable *)
 let rec analyse_type_affectable a =
   match a with
   | AstTds.Dereference a -> (
       let na, ta = analyse_type_affectable a in
       match ta with
       | Pointeur t -> (AstType.Dereference na, t)
-      | _ -> raise DerefereceNonPointeur)
+      | _ ->
+          (*on ne peut pas déréférence un identifiant qui n'est pas un pointeur *)
+          raise DerefereceNonPointeur)
   | AstTds.Ident i -> (
       match !i with
       | InfoVar (_, typ, _, _) -> (AstType.Ident i, typ)
-      | _ -> failwith "erreur interne 7")
+      | _ ->
+          failwith
+            "erreur interne : analyse_type_affectable : Ident pas InfoVar ")
 
-(* analyse_type_expression : AstTds.expression -> AstType.expression *)
+(* analyse_type_expression : AstTds.expression -> (AstType.expression * typ) *)
 (* Paramètre e : l'expression à analyser *)
 (* Vérifie le bon typage de l'expression et tranforme l'expression
    en une expression de type AstType.expression couplé à son type *)
@@ -152,9 +156,9 @@ and analyse_type_bloc li = List.map analyse_type_instruction li
 
 (* analyse_type_fonction : AstTds.fonction -> AstType.fonction *)
 (* Paramètre : la fonction à analyser *)
-(* Vérifie la bonne utilisation des identifiants et tranforme la fonction
+(* Vérifie le bon typage et tranforme la fonction
    en une fonction de type AstType.fonction *)
-(* Erreur si mauvaise utilisation des identifiants *)
+(* Erreur si typage incorrect *)
 let analyse_type_fonction (AstTds.Fonction (t, info, lp, li)) =
   (* récupérations des types et les infos des paramètres de la fonction *)
   let typeList, infosList = split lp in
@@ -169,17 +173,23 @@ let analyse_type_fonction (AstTds.Fonction (t, info, lp, li)) =
 (* analyse_type_fonctions -> AstTds.fonction list -> AstType.fonction list *)
 (* Paramètre lf : la liste des fonctions à analyser *)
 (* Analyse les fonctions d'une liste de AstTds.fonction, et les transforme en une liste de AstTye.fonction *)
+(* Vérifie le bon typage des fonctions *)
 let analyse_type_fonctions lf = List.map analyse_type_fonction lf
 
 (* analyse_type_globale : AstTds.globale -> AstType.Globale *)
 (* Paramètre g : la variable globale *)
-(* TODO DOC *)
+(* Vérifie le bon typage d'une déclaration de variable globale et la transforme en une AstType.Globale *)
+(* Erreur si type imcompatible *)
 let analyse_type_globale (AstTds.Globale (t, ia, e)) =
+  (* analyse de l'expression de la valeur *)
   let ne, netyp = analyse_type_expression e in
   if est_compatible t netyp then (
+    (* si l'expression est du bon type *)
     modifier_type_variable t ia;
     AstType.Globale (ia, ne))
-  else raise (TypeInattendu (netyp, t))
+  else
+    (*si l'expression n'a pas le type de la variable globale déclarée *)
+    raise (TypeInattendu (netyp, t))
 
 (* analyser : AstTds.programme -> AstType.programme *)
 (* Paramètre : le programme à analyser *)
